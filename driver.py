@@ -1,4 +1,7 @@
-import threading, Queue, Tkinter, sys
+import threading
+import Queue
+import Tkinter
+import sys
 
 from wrapper import LeapFrames
 from synthesizer import Synthesizer

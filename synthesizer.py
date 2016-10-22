@@ -1,4 +1,7 @@
-import pyaudio, csv, sys, threading
+import pyaudio
+import csv
+import sys
+import threading
 import numpy as np
 
 # Create instances of this class using 'with Synthesizer() as synthesizer'.

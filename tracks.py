@@ -1,8 +1,13 @@
-import threading, operator, json
+#TODO update docstring info and style
+
+import threading
+import operator
+import json
+import logger #TODO
 
 #TODO add in an error code/priority/?; not sure if i need to quantify beyond the message
 # Exception definition for this class
-class TrackException(Exception):
+class Error(Exception):
 	def __init__(self, msg):
 		self.msg = msg
 	
@@ -11,7 +16,7 @@ class TrackException(Exception):
 
 
 #TODO add in tracking for a wav file and associated set/get/?
-class TrackInfo:
+class TrackInfo(cls):
 	def __init__(self, num):
 		self.number = num
 		self.name = "Track %s" %(self.number)
@@ -61,12 +66,12 @@ class TrackInfo:
 			self.recording.append(pos)
 
 		else:
-			raise TrackException("Track is not active")
+			raise Error("Track is not active")
 
 
 
-#class Tracks(threading.Thread):
-class Tracks():
+#class Tracks(cls, threading.Thread):
+class Tracks(cls):
 	def __init__(self):
 		#threading.Thread.__init__(self)
 		self.tracks = {}
@@ -91,7 +96,7 @@ class Tracks():
 	# a basic check to ensure a string is not null
 	def _checkName(self, name):
 		if not name:
-			raise TrackException("String is empty or null")
+			raise Error("String is empty or null")
 
 	### Getters and Setters
 	
@@ -99,14 +104,14 @@ class Tracks():
 	def setProjectName(self, name):
 		try:
 			self._checkName(name)
-		except TrackException, err:
-			raise TrackException(err)
+		except Error as error:
+			raise TrackException(error)
 
 		self.projectName = name
 
 	# returns string of the project's current name
 	def getProjectName(self):
-		return self.projectName
+		return self._projectName
 
 	# string setter for track names; string must NOT be empty or null
 	# sets current track name by default
@@ -114,8 +119,8 @@ class Tracks():
 	def setTrackName(self, name, track=None):
 		try:
 			self._checkName(name)
-		except TrackException, err:
-			raise TrackException(err)
+		except Error as error:
+			raise TrackException(error)
 
 		if track is None:
 			track = self.trackCurrent
@@ -172,7 +177,7 @@ class Tracks():
 			return self.trackCurrent
 
 		else:
-			raise TrackException("Given track number is not valid/found")
+			raise Error("Given track number is not valid/found")
 
 	# Deleting a track
 	def deleteTrack(self, track=None):
@@ -183,7 +188,7 @@ class Tracks():
 			del self.tracks[track]
 
 		else:
-			raise TrackException("Given track number is not valid/found")
+			raise Error("Given track number is not valid/found")
 
 	### track updating
 
@@ -206,8 +211,8 @@ class Tracks():
 		try:
 			self.tracks[track].addData(pos)
 
-		except TrackException, err:
-			raise TrackException(err)
+		except Error as error:
+			raise TrackException(error)
 
 	### saving and opening
 
@@ -220,7 +225,7 @@ class Tracks():
 			with open(str(fn) + '.mca', 'w') as f:
 				f.write(self.getJSON())
 		except:
-			raise TrackException("Could not open/write the file")
+			raise Error("Could not open/write the file")
 
 	#TODO
 	def closeProject(self):
@@ -234,7 +239,7 @@ class Tracks():
 				for key in data:
 					print key
 		except:
-			raise TrackException("Could not open/read the file")
+			raise Error("Could not open/read the file")
 
 
 
@@ -254,8 +259,8 @@ def debug():
 				pos = leap.getNormPos()
 				try:
 					tracks.addData(pos)
-				except TrackException, err:
-					print err
+				except Error as error:
+					print error
 		except KeyboardInterrupt:
 			tracks.stopRecording()
 
