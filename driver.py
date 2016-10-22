@@ -126,6 +126,7 @@ def main(argv):
 		print "Mocha runs on 64-bit machines using Python 2.7.4"
 		print "Proper usage of the program is the following:"
 		print "python driver.py (l|r)"
+		print "(l|r) specifies the preferred hand"
 		sys.exit(1)
 
 	controller = MainController(argv[1])

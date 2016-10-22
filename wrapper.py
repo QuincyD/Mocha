@@ -15,9 +15,16 @@ class LeapFrames:
 
 	def getPos(self):
 		frame = self.controller.frame()
+		numHands = len(frame.hands)
+
 		for hand in frame.hands:
-			# checking if the current hand is one we care about
-			if (hand.is_left and self.hand == 'l') or (not hand.is_left and self.hand == 'r'):
+			# checking if the current hand is the preferred hand given that 2 hands are in range
+			if (
+					(numHands == 1) or 
+					(numHands == 2 and self.hand == 'l' and hand.is_left) or 
+					(numHands == 2 and self.hand == 'r' and not hand.is_left)
+				):
+
 				# Data must be parsed this way because palm_position is a "Vector"
 				# which is a custom structure defined by Leap Motion with no
 				# direct translation in a Python list
@@ -25,6 +32,7 @@ class LeapFrames:
 				for i in range(3):
 					tmp.append(hand.palm_position[i])
 				return tmp
+
 		# if a hand is not found or it is a bad frame, return nothing
 		return []
 
@@ -60,8 +68,8 @@ class LeapFrames:
 			tmp = [xCoord, yCoord, pos[2]]
 			return tmp
 
-# Main function is used only for testing and should be removed for final release
-def main():
+# Debug function is used only for testing and should be removed for final release
+def debug():
 
 	#controller = Leap.Controller()
 	test = LeapFrames('l')
@@ -75,9 +83,9 @@ def main():
 	#frame = controller.frame()
 	#for hand in frame.hands:
 	#	print hand.palm_position
-	print test.getNormPos()
+	print len(test.getFrame().hands)
 
 
 # main call handling
 if __name__ == '__main__':
-	main()
+	debug()
