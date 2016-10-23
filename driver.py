@@ -8,7 +8,7 @@ from synthesizer import Synthesizer
 
 ### GLOBAL VARIABLES
 # Variables for screen size
-screenX = 1000
+screenX = 1000	#TODO set these to full screen size from Tkinter
 screenY = 500
 
 # Threading class for Leap Motion
@@ -23,13 +23,17 @@ class LeapThread(threading.Thread):
 
 	# Returns the position of the user's hand
 	def getPos(self):
-		return self.frameGen.getPos()
+		pos = self.frameGen.getPos()
+		if pos:
+			pos[1] = 1 - pos[1]		# need to invert y-coord for UI
+		return pos
 
 	# Returns the normalized position of the user's hand
-	def getNormPos(self, pos=None):
+	def getNormPos(self):
+		pos = self.frameGen.getNormPos()
 		if pos:
-			return self.frameGen.normalize(pos)
-		return self.frameGen.getNormPos()
+			pos[1] = 1 - pos[1]		# need to invert y-coord for UI
+		return pos
 
 	# Returns the entire frame from the Leap Motion
 	def getFrame(self):

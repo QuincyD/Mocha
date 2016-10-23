@@ -3,19 +3,30 @@ import Leap
 
 class LeapFrames:
 	# Class variables for the range of the Leap Motion
-	leapX = 480
-	leapY = 500
+	#leapX = 480	# NOTE depreciated
+	#leapY = 500	# NOTE depreciated
 
 	def __init__(self, hand):
 		self.controller = Leap.Controller()
 		self.hand = hand
 
+	def _cleanPos(self, pos):
+		# Data must be parsed this way because palm_position is a "Vector"
+		# which is a custom structure defined by Leap Motion with no
+		# direct translation in a Python list
+		tmp = list([])
+		for i in range(3):
+			tmp.append(pos[i])
+
+		return tmp
+
 	def getFrame(self):
 		return self.controller.frame()
 
-	def getPos(self):
+	def getPos(self, normalized=False):
 		frame = self.controller.frame()
 		numHands = len(frame.hands)
+		interactionBox = frame.interaction_box
 
 		for hand in frame.hands:
 			# checking if the current hand is the preferred hand given that 2 hands are in range
@@ -25,27 +36,23 @@ class LeapFrames:
 					(numHands == 2 and self.hand == 'r' and not hand.is_left)
 				):
 
-				# Data must be parsed this way because palm_position is a "Vector"
-				# which is a custom structure defined by Leap Motion with no
-				# direct translation in a Python list
-				tmp = list([])
-				for i in range(3):
-					tmp.append(hand.palm_position[i])
-				return tmp
+					if normalized:
+						return self._cleanPos(
+							interactionBox.normalize_point(hand.palm_position)
+						)
+					else:
+						return self._cleanPos(hand.palm_position)
 
 		# if a hand is not found or it is a bad frame, return nothing
 		return []
 
 	# Returns the position data in a normalized form
 	def getNormPos(self):
-		pos = self.getPos()
+		return self.getPos(True)
 
-		# making sure a position was returned
-		if pos:
-			return self.normalize(pos)
-		return pos
-
-	def normalize(self, pos):
+	# NOTE function should no longer be need since the leap motion SDK
+	# is now taking care of this for us
+	def _normalize(self, pos):
 		if pos:
 			# xCoord is based on the origin at the center of LM
 			xCoord = (pos[0] + (self.leapX / 2)) / self.leapX
