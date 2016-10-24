@@ -31,7 +31,8 @@ class LeapFrames(threading.Thread):
 		# direct translation in a Python list
 		tmp = list([])
 		for i in range(3):
-			tmp.append(pos[i])
+			cur = float('%.6f' %(pos[i]))
+			tmp.append(cur)
 
 		tmp[1] = 1 - tmp[1]		# need to invert ycoord for GUI
 

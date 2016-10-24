@@ -1,23 +1,44 @@
-import Tkinter
+import mtTkinter as Tkinter
 import threading
-import logging #TODO
+import Queue
+import logging
+
+logger = logging.getLogger(name='MochaLogger')
 
 class GUI(threading.Thread):
 	def __init__(self, queueIn, canvas, screenX, screenY):
 		super(GUI, self).__init__()
+		logger.info("GUI thread intialized")
 
 		self._queueIn = queueIn
+		self._stop = threading.Event()
 		self.canvas = canvas
 		self.screenX = screenX
 		self.screenY = screenY
 		self.cursorColor = "red"
 		self._playScreen()
 
+	def stop(self):
+		self._stop.set()
+		logger.info("GUI thread stopped")
+
+	def stopped(self):
+		return self._stop.isSet()
+
+	def request(self, function, *args, **kwargs):
+		self._queueIn.put((function, args, kwargs))
+
 	def run(self):
-		pass
+		logger.info("GUI thread started")
+		while not self._stop.isSet():
+			try:
+				function, args, kwargs = self._queueIn.get(0.01)
+				function(*args, **kwargs)
+			except Queue.Empty:
+				pass
 
 	# creates a cursor object
-	def _createCursor(self, x=100, y=100, r=10):
+	def _createCursor(self, x=100, y=100, r=7):
 		return self.canvas.create_oval(x - r, y - r, x + r, y + r, fill=self.cursorColor)
 	
 	def _playScreen(self):
@@ -41,7 +62,18 @@ class GUI(threading.Thread):
 
 	# updates the position of the cursor object based on pos 
 	# pos = normalized data of the hand position
-	def cursorUpdate(self, pos):
-		self.canvas.delete(self.cursor)
-		self.cursor = self._createCursor(x = pos[0] * self.screenX, y = pos[1] * self.screenY)
-		self.canvas.pack()
+	def _cursorUpdate(self, pos):
+		currentPos = self.canvas.coords(self.cursor)
+		deltaX = (pos[0] * self.screenX) - currentPos[0]
+		deltaY = (pos[1] * self.screenY) - currentPos[1]
+
+		#FIXME check screen region to encapsulate cursor
+
+		self.canvas.move(self.cursor, deltaX, deltaY)
+
+	def update(self, pos):
+		# normPos = pos[0]
+		# click = pos[1]
+		normPos = pos #FIXME when click working
+
+		self._cursorUpdate(normPos)

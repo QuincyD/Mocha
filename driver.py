@@ -1,4 +1,4 @@
-import Tkinter
+import mtTkinter as Tkinter
 import sys
 import logging #TODO
 import Queue
@@ -21,8 +21,8 @@ class MainController:
 		
 		self.leapQueueOut = Queue.Queue()
 		self.leap = LeapFrames(self.leapQueueOut, self.hand)
-		# self.leap.daemon = True
-		
+		self.leap.daemon = True
+
 		self.synth = Synthesizer(440, 1.0, .25)
 
 		### Starting the GUI
@@ -35,10 +35,13 @@ class MainController:
 			height=screenY, bd=0, highlightthickness=0)
 		
 		# starting a gui class
-		self.gui = GUI(self.canvas, screenX, screenY)
+		self.guiQueueIn = Queue.Queue()
+		self.gui = GUI(self.guiQueueIn, self.canvas, screenX, screenY)
+		self.gui.daemon = True
 
 		# starting threads
 		self.leap.start()
+		self.gui.start()
 
 	# Function through which all necessary functions are looped (on the main thread)
 	def loop(self):
@@ -47,13 +50,22 @@ class MainController:
 			self.leap.request(self.leap.getNormPos)
 			try:
 				normalized = self.leapQueueOut.get(True)
-			except Queue.Empty:
+			except Queue.Empty: #FIXME above call is blocking so this never happens....
 				normalized = None
 
 			if normalized:
 				# updating sound and UI with new frame
-				self.gui.cursorUpdate(normalized)
-				self.synth.play(normalized)
+				# if self.guiQueueIn.empty():
+				# 	self.gui.request(self.gui.update, normalized)
+
+				try: #FIXME REALLY BAD IDEA FOR FUTURE
+					self.guiQueueIn.get(False)
+				except Queue.Empty:
+					pass
+				finally:
+					self.gui.request(self.gui.update, normalized)
+
+				# self.synth.play(normalized)
 
 			# events for the GUI to work
 			self.tk.update_idletasks()
@@ -65,6 +77,7 @@ class MainController:
 
 	def shutdown(self):
 		self.leap.stop()
+		self.gui.stop()
 
 
 
