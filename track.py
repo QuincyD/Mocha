@@ -7,12 +7,15 @@ import operator
 import json
 import re
 import os
-import logging #TODO
+import logging
+
+logger = logging.getLogger(name='MochaLogger')
 
 # Exception definition for this class
 class TrackError(Exception):
 	def __init__(self, msg):
 		self.msg = msg
+		logger.warning("TrackError exception thrown: %s" %(self.msg))
 	
 	def	__str__(self):
 		return self.msg
@@ -21,11 +24,9 @@ class Tracks(threading.Thread):
 
 	def __init__(self):
 		threading.Thread.__init__(self)
-		self._tracks = {}
-		self._trackCurrent = 0
-		self._projectName = self._getNewProjectName()
-		self._projectPath = str(os.getcwd())
-		self.saved = True
+		logger.info("Track thread initialized")
+
+		self._newProject()
 
 	# generator object for dict() calls to the class
 	# if any other yields are added, need to change import
@@ -33,8 +34,17 @@ class Tracks(threading.Thread):
 		for key, obj in self._tracks.iteritems():
 			yield key, obj.getDict()
 
-	def _saveFileFormat(self):		#TODO Does Windows need '\'?
-		return self._projectPath + '/' + self._projectName + '.mca'
+	def _newProject(self):
+		self._tracks = {}
+		self._trackCurrent = 0
+		self._projectName = self._getNewProjectName()
+		self._projectPath = str(os.getcwd())
+		self.saved = True
+
+		logger.info("New project created")
+
+	def _saveFileFormat(self):
+		return os.path.join(self._projectPath, self._projectName + '.mca')
 
 	def _getNewProjectName(self):
 		largest = 1
@@ -42,14 +52,17 @@ class Tracks(threading.Thread):
 		all_files = os.listdir(os.getcwd())
 		for file in all_files:
 			tmp = file.split('.')
+			print tmp
 			try:
 				if re.match('^MochaProject-[0-9]+$', file[0]):
+					print "if entered on: ", file[0]
 					tmp = tmp[0].split('-')
 					if int(tmp[1]) > largest:
 						largest = int(file[1])
 			except:
 				pass
 
+		print "largest: ", largest
 		return "MochaProject-" + str(largest + 1)
 
 	# determines the largest key value in the _tracks dictionary
@@ -74,7 +87,7 @@ class Tracks(threading.Thread):
 		return False
 
 	def run(self):
-		pass
+		logger.info("Track thread started")
 
 	### Getters and Setters
 	
@@ -209,6 +222,8 @@ class Tracks(threading.Thread):
 		self._trackCurrent = self._largestTrack() + 1
 		self._tracks[self._trackCurrent] = TrackInfo(self._trackCurrent)
 
+		logger.info("New track created: %s" %(self._trackCurrent))
+
 		return self._trackCurrent
 
 	# This function should not be needed, and therefore should never be called.
@@ -237,6 +252,8 @@ class Tracks(threading.Thread):
 
 		self._action()
 
+		logger.info("Track deleted: %s" %(track))
+
 	### track updating
 
 	# start recording on a new track
@@ -246,11 +263,15 @@ class Tracks(threading.Thread):
 
 		self._action()
 
+		logger.info("Track recording started: %s" %(self._trackCurrent))
+
 		return trackNum
 
 	# stop recording on the current track
 	def stopRecording(self):
 		self._setTrackActive(False)
+
+		logger.info("Track recording stopped: %s" %(self._trackCurrent))
 
 	# add a new position frame to the current track
 	# position frame should be of the form (x, y, z[not normalized])
@@ -284,15 +305,15 @@ class Tracks(threading.Thread):
 
 		self.saved = True
 
+		logger.info("%s has been saved" %(self._projectName))
+
 	def closeProject(self, override=False):
 		if not override and not self.saved:
 			raise TrackError("Project not recently saved!")
+
+		logger.info("%s has been closed" %(self._projectName))
 		
-		self._tracks = {}
-		self._trackCurrent = 0
-		self._projectName = self._getNewProjectName()
-		self._projectPath = str(os.getcwd())
-		self.saved = True
+		self._newProject()
 
 	def importProject(self, fn, override=False):
 		try:
@@ -321,6 +342,8 @@ class Tracks(threading.Thread):
 		self._projectName = path.pop().split('.')[0]
 		self._projectPath = '/' + '/'.join(path)
 
+		logger.info("%s has been imported" %(self._projectName))
+
 
 
 def _checkFile(file):
@@ -340,6 +363,11 @@ def _checkPath(path):
 
 # function for debugging
 def debug():
+	from mochaLogger import MochaLogger
+	MochaLogger()
+	logger = logging.getLogger(name='MochaLogger')
+	logger.critical("*****     NEW RUN STARTED     *****\n")
+
 	from wrapper import LeapFrames
 	import time
 	leap = LeapFrames('l')

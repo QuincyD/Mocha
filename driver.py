@@ -1,96 +1,29 @@
-import threading
-import Queue
 import Tkinter
 import sys
+import logging #TODO
+import Queue
+from concurrent import futures
+from mochaLogger import MochaLogger
 
 from wrapper import LeapFrames
 from synthesizer import Synthesizer
+from UI import GUI
 
 ### GLOBAL VARIABLES
 # Variables for screen size
 screenX = 1000	#TODO set these to full screen size from Tkinter
 screenY = 500
 
-# Threading class for Leap Motion
-class LeapThread(threading.Thread):
-	def __init__(self, queue, hand):
-		threading.Thread.__init__(self)
-		self.queue = queue
-		self.frameGen = LeapFrames(hand)
-
-	def run(self):
-		pass
-
-	# Returns the position of the user's hand
-	def getPos(self):
-		pos = self.frameGen.getPos()
-		if pos:
-			pos[1] = 1 - pos[1]		# need to invert y-coord for UI
-		return pos
-
-	# Returns the normalized position of the user's hand
-	def getNormPos(self):
-		pos = self.frameGen.getNormPos()
-		if pos:
-			pos[1] = 1 - pos[1]		# need to invert y-coord for UI
-		return pos
-
-	# Returns the entire frame from the Leap Motion
-	def getFrame(self):
-		return self.frameGen.getFrame()
-
-class GUI:
-	def __init__(self, canvas):
-		self.canvas = canvas
-		self.color = "red"
-		self._playScreen()
-
-	# creates a cursor object
-	def _createCursor(self, x=100, y=100, r=10):
-		return self.canvas.create_oval(x - r, y - r, x + r, y + r, fill=self.color)
-	
-	def _playScreen(self):
-		self.bins = self._drawBins()
-		self.cursor = self._createCursor()
-
-		self.canvas.pack()
-
-	def _drawBins(self):
-		# creating verticle lines based on the bins
-		lineBoundNorms = [0.083, 0.166, 0.25, 0.33, 0.4167, 
-			0.500, 0.583, 0.666, 0.750, 0.833, 0.9167]
-
-		for norm in lineBoundNorms:
-			x1 = x2 = norm * screenX
-			y1, y2 = (screenY / 2) - 1, screenY - 1
-			self.canvas.create_line(x1, y1, x2, y2)
-
-		# creating a horizontal line
-		self.canvas.create_line(0, screenY / 2, screenX - 1, screenY / 2)
-
-	# updates the position of the cursor object based on pos 
-	# pos = normalized data of the hand position
-	def cursorUpdate(self, pos):
-		self.canvas.delete(self.cursor)
-		self.cursor = self._createCursor(x = pos[0] * screenX, y = pos[1] * screenY)
-		self.canvas.pack()
-
 class MainController:	
 	def __init__(self, hand):
 		### Initialize variables
 		self.hand = hand
-		self.workers = {}
-		self.queue = Queue.Queue()
-
-		### Initialize threads
-		# thread for LeapMotion frames
-		self.workers['frame'] = LeapThread(self.queue, self.hand)
-
-		# thread for synthesizer
-		self.workers['synth'] = Synthesizer(440, 1.0, .25)
-
-		# starting all worker threads
-		self.start()
+		
+		self.leapQueueOut = Queue.Queue()
+		self.leap = LeapFrames(self.leapQueueOut, self.hand)
+		# self.leap.daemon = True
+		
+		self.synth = Synthesizer(440, 1.0, .25)
 
 		### Starting the GUI
 		self.tk = Tkinter.Tk()
@@ -102,26 +35,36 @@ class MainController:
 			height=screenY, bd=0, highlightthickness=0)
 		
 		# starting a gui class
-		self.gui = GUI(self.canvas)
-	
-	# Function to start all of the workers
-	def start(self):
-		for key, obj in self.workers.iteritems():
-			obj.start()
+		self.gui = GUI(self.canvas, screenX, screenY)
+
+		# starting threads
+		self.leap.start()
 
 	# Function through which all necessary functions are looped (on the main thread)
 	def loop(self):
-		# checking to see if a new frame is available
-		normalized = self.workers['frame'].getNormPos()
+		try:
+			# checking to see if a new frame is available
+			self.leap.request(self.leap.getNormPos)
+			try:
+				normalized = self.leapQueueOut.get(True)
+			except Queue.Empty:
+				normalized = None
 
-		if normalized:
-			# updating sound and UI with new frame
-			self.workers['synth'].play(normalized)
-			self.gui.cursorUpdate(normalized)
+			if normalized:
+				# updating sound and UI with new frame
+				self.gui.cursorUpdate(normalized)
+				self.synth.play(normalized)
 
-		# events for the GUI to work
-		self.tk.update_idletasks()
-		self.tk.update()
+			# events for the GUI to work
+			self.tk.update_idletasks()
+			self.tk.update()
+
+		except:
+			self.shutdown()
+			raise
+
+	def shutdown(self):
+		self.leap.stop()
 
 
 
@@ -136,13 +79,22 @@ def main(argv):
 		print "(l|r) specifies the preferred hand"
 		sys.exit(1)
 
+	# starting logger
+	MochaLogger()
+	logger = logging.getLogger(name='MochaLogger')
+	logger.critical("*****     NEW RUN STARTED     *****\n")
+
 	controller = MainController(argv[1])
 
 	try:
 		while True:
 			controller.loop()
+
 	except KeyboardInterrupt:
 		pass
+
+	finally:
+		controller.shutdown()
 
 	print "\nThank you for using Mocha!"
 

@@ -1,8 +1,8 @@
 import logging
 
 class MochaLogger:
-    """
-    A logger to record various levels of events to a log file
+    """A logger to record various levels of events to a log file
+
     Only needs to be instantiated once when the program first starts up
     Once initialized, can be accessed across modules with:
         import logging
@@ -25,7 +25,7 @@ class MochaLogger:
         fh2 = logging.FileHandler('mochaErrors.log')
         fh2.setLevel(logging.ERROR)
 
-        formatter = logging.Formatter('[%(levelname)s] (%(asctime)s) %(pathname)s, %(funcName)s in line %(lineno)d \n\t %(message)s')
+        formatter = logging.Formatter('[%(levelname)s] (%(asctime)s) %(thread)d, %(pathname)s, %(funcName)s in line %(lineno)d \n\t %(message)s')
         fh1.setFormatter(formatter)
         fh2.setFormatter(formatter)
 

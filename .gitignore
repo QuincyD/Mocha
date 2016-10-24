@@ -4,5 +4,4 @@ LeapSDK/*
 output.txt
 env/
 *.mca
-mocha.log
-mochaErrors.log
+*.log

@@ -1,14 +1,29 @@
+#TODO update docstyle
+
 import sys
+import logging
+import threading
+import Queue
 import Leap
 
-class LeapFrames:
+logger = logging.getLogger(name='MochaLogger')
+
+class LeapFrames(threading.Thread):
 	# Class variables for the range of the Leap Motion
 	#leapX = 480	# NOTE depreciated
 	#leapY = 500	# NOTE depreciated
 
-	def __init__(self, hand):
+	def __init__(self, queueOut, hand):
+		super(LeapFrames, self).__init__()
+		logger.info("LeapMotion thread intialized")
+
 		self.controller = Leap.Controller()
 		self.hand = hand
+		self._queueIn = Queue.Queue()
+		self._queueOut = queueOut
+		self._frame = None
+		self._stop = threading.Event()
+		self._freshFrame = False
 
 	def _cleanPos(self, pos):
 		# Data must be parsed this way because palm_position is a "Vector"
@@ -18,13 +33,39 @@ class LeapFrames:
 		for i in range(3):
 			tmp.append(pos[i])
 
+		tmp[1] = 1 - tmp[1]		# need to invert ycoord for GUI
+
 		return tmp
 
-	def getFrame(self):
+	def stop(self):
+		self._stop.set()
+		logger.info("LeapMotion thread stopped")
+
+	def stopped(self):
+		return self._stop.isSet()
+
+	def request(self, function, *args, **kwargs):
+		self._queueIn.put((function, args, kwargs))
+
+	def run(self):
+		logger.info("LeapMotion thread started")
+		while not self._stop.isSet():
+			try:
+				function, args, kwargs = self._queueIn.get(False)
+				function(*args, **kwargs)
+				self._freshFrame = False
+			except Queue.Empty:
+				self._frame = self._getFrame()
+				self._freshFrame = True
+
+	def _getFrame(self):
 		return self.controller.frame()
 
-	def getPos(self, normalized=False):
-		frame = self.controller.frame()
+	def getPos(self, _normalized=False):
+		if not self._freshFrame:
+			self._frame = self._getFrame()
+
+		frame = self._frame
 		numHands = len(frame.hands)
 		interactionBox = frame.interaction_box
 
@@ -36,19 +77,24 @@ class LeapFrames:
 					(numHands == 2 and self.hand == 'r' and not hand.is_left)
 				):
 
-					if normalized:
-						return self._cleanPos(
+					if _normalized:
+						normPos = self._cleanPos(
 							interactionBox.normalize_point(hand.palm_position)
 						)
-					else:
-						return self._cleanPos(hand.palm_position)
 
-		# if a hand is not found or it is a bad frame, return nothing
-		return []
+						self._queueOut.put(normPos)
+						break
+					else:
+						pos = self._cleanPos(hand.palm_position)
+						self._queueOut.put(pos)
+						break
+
+		if self._queueOut.empty():
+			self._queueOut.put([])
 
 	# Returns the position data in a normalized form
 	def getNormPos(self):
-		return self.getPos(True)
+		self.getPos(True)
 
 	# NOTE function should no longer be need since the leap motion SDK
 	# is now taking care of this for us
@@ -75,24 +121,29 @@ class LeapFrames:
 			tmp = [xCoord, yCoord, pos[2]]
 			return tmp
 
-# Debug function is used only for testing and should be removed for final release
 def debug():
+	# starting logger
+	from mochaLogger import MochaLogger
+	MochaLogger()
+	logger = logging.getLogger(name='MochaLogger')
+	logger.critical("*****     NEW DEBUG STARTED     *****\n")
 
-	#controller = Leap.Controller()
-	test = LeapFrames('l')
+	leapQueueOut = Queue.Queue()
+	leap = LeapFrames(leapQueueOut, 'l')
+	leap.start()
 
-	print "woo"
 	try:
-		sys.stdin.readline()
+		while True:
+			leap.request(leap.getNormPos)
+
+			try:
+				normPos = leapQueueOut.get(False)
+				print normPos
+			except Queue.Empty:
+				pass
+
 	except KeyboardInterrupt:
-		pass
+		leap.stop()
 
-	#frame = controller.frame()
-	#for hand in frame.hands:
-	#	print hand.palm_position
-	print len(test.getFrame().hands)
-
-
-# main call handling
-if __name__ == '__main__':
+if __name__ == "__main__":
 	debug()

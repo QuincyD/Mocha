@@ -1,17 +1,14 @@
 import pyaudio
 import csv
 import sys
-import threading
 import numpy as np
 
 # Create instances of this class using 'with Synthesizer() as synthesizer'.
 # That way the __exit__ method should be automatically invoked to handle closing the audio stream
-class Synthesizer(threading.Thread):
+class Synthesizer(object):
 	'Contains methods to generate sin waves, update signal properties, and handle play back'
 
 	def __init__(self, frequency, amplitude, signalDuration):
-		threading.Thread.__init__(self)
-
 		# Set up signal properties
 		self.frequency = frequency
 		self.amplitude = amplitude
@@ -34,9 +31,6 @@ class Synthesizer(threading.Thread):
 
 	def __exit__(self, exc_type, exc_value, traceback):
 		self.closeStream()
-
-	def run(self):
-		pass
 
 	def _getNoteFreqs(self):
 		return {
