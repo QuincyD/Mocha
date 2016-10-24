@@ -4,7 +4,7 @@ import time
 # import matplotlib as mpl
 # mpl.rcParams['backend'] = "qt4agg"
 # mpl.rcParams['backend.qt4'] = "PySide"
-from matplotlib.pyplot import figure, show
+#from matplotlib.pyplot import figure, show
 import csv
 import sys
 
@@ -34,7 +34,7 @@ class Synthesizer:
 					rate=self.fs,
 					output=True,
 					frames_per_buffer=4096,
-					stream_callback=self.leapCallback)
+					stream_callback=self.noLeapCallback)
 
 	def __enter__(self):
 		return self
@@ -59,13 +59,13 @@ class Synthesizer:
 		self.phase = (2 * np.pi * self.time * (self.frequency - frequency) + self.phase) % (2*np.pi)
 		self.frequency = frequency
 
-	def runDebug(self, frame_count):
-		fig = figure()
-		ax1 = fig.add_subplot(211)
-		ax1.plot(np.arange(frame_count)/float(self.fs), self.signal)
-		ax1.grid(True)
-		show()
-		i = raw_input("Press Enter to continue...")
+#	def runDebug(self, frame_count):
+#		fig = figure()
+#		ax1 = fig.add_subplot(211)
+#		ax1.plot(np.arange(frame_count)/float(self.fs), self.signal)
+#		ax1.grid(True)
+#		show()
+#		i = raw_input("Press Enter to continue...")
 
 	def noLeapCallback(self, in_data, frame_count, time_info, status):
 		if not self.csvReader:
@@ -85,7 +85,6 @@ class Synthesizer:
 			self.updateFreq(newFreq)
 
 		self.updateSignal(frame_count)
-		# self.playSignal()
 		# self.runDebug(frame_count)
 
 		return (self.amplitude*self.signal, pyaudio.paContinue)
@@ -102,7 +101,6 @@ class Synthesizer:
 				self.updateFreq(newFreq)
 
 		self.updateSignal(frame_count)
-		# self.playSignal()
 		#self.runDebug()
 		# dumb
 		return (self.amplitude*self.signal, pyaudio.paContinue)
