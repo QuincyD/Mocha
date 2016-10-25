@@ -4,7 +4,7 @@ import time
 # import matplotlib as mpl
 # mpl.rcParams['backend'] = "qt4agg"
 # mpl.rcParams['backend.qt4'] = "PySide"
-#from matplotlib.pyplot import figure, show
+# from matplotlib.pyplot import figure, show
 import csv
 import sys
 import threading
@@ -58,7 +58,7 @@ class Synthesizer(threading.Thread):
 		logger.info("Synthesizer thread stopped")
 
 	def stopped(self):
-		return self._stop
+		return self._stop.isSet()
 
 	def request(self, function, *args, **kwargs):
 		self._queueIn.put((function, args, kwargs))
@@ -72,7 +72,7 @@ class Synthesizer(threading.Thread):
 				function(*args, **kwargs)
 			except Queue.Empty:
 				pass
-	
+
 
 	def updateSignal(self, frame_count):
 		#TODO: implement time tracking
@@ -85,19 +85,19 @@ class Synthesizer(threading.Thread):
 
 	# Updates the frequency and also modifies phase so the signal's vertical positioning lines up
 	def updateFreq(self, frequency):
-		# currPhase = (self.time * self.frequency + self.phase) % (2*np.pi)
-		# newPhase = (self.time * frequency) % (2*np.pi)
-		# self.phase = currPhase - newPhase
+		#currPhase = (2 * np.pi * self.time * self.frequency + self.phase) % (2*np.pi)
+		#newPhase = (2 * np.pi * self.time * frequency + self.phase) % (2*np.pi)
+		#self.phase = currPhase - newPhase
 		self.phase = (2 * np.pi * self.time * (self.frequency - frequency) + self.phase) % (2*np.pi)
 		self.frequency = frequency
 
-#	def runDebug(self, frame_count):
-#		fig = figure()
-#		ax1 = fig.add_subplot(211)
-#		ax1.plot(np.arange(frame_count)/float(self.fs), self.signal)
-#		ax1.grid(True)
-#		show()
-#		i = raw_input("Press Enter to continue...")
+	# def runDebug(self, frame_count):
+	# 	fig = figure()
+	# 	ax1 = fig.add_subplot(211)
+	# 	ax1.plot(np.arange(frame_count)/float(self.fs), self.signal)
+	# 	ax1.grid(True)
+	# 	show()
+	# 	i = raw_input("Press Enter to continue...")
 
 	def noLeapCallback(self, in_data, frame_count, time_info, status):
 		if not self.csvReader:
@@ -133,7 +133,7 @@ class Synthesizer(threading.Thread):
 				self.updateFreq(newFreq)
 
 		self.updateSignal(frame_count)
-		#self.runDebug()
+		self.runDebug(frame_count)
 		# dumb
 		return (self.amplitude*self.signal, pyaudio.paContinue)
 
