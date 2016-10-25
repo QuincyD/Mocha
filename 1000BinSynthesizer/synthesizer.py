@@ -6,7 +6,8 @@ import numpy as np
 class Synthesizer(threading.Thread):
 	'Contains methods to generate sin waves, update signal properties, and handle play back'
 
-	def __init__(self, frequency, amplitude):
+	# Need to keep interface the same across all synthesizer types, so we accept base and maxDiff
+	def __init__(self, frequency, amplitude, baseFrequency, maxDiffFrequency):
 		threading.Thread.__init__(self)
 
 		# Set up signal properties
@@ -135,5 +136,5 @@ class Synthesizer(threading.Thread):
 
 
 if __name__ == "__main__":
-	with Synthesizer(880, 1.0) as synthesizer:
+	with Synthesizer(880, 1.0, 230, 880) as synthesizer:
 		synthesizer.run()
