@@ -1,4 +1,4 @@
-import mtTkinter as Tkinter
+from libraries import mtTkinter as Tkinter
 import threading
 import Queue
 import logging

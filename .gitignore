@@ -1,6 +1,6 @@
 *.pyc
 *.swp
-LeapSDK/*
+libraries/LeapSDK/*
 output.txt
 env/
 *.mca

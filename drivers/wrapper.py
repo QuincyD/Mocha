@@ -1,10 +1,11 @@
 #TODO update docstyle
 
+from libraries import Leap
+
 import sys
 import logging
 import threading
 import Queue
-import Leap
 
 logger = logging.getLogger(name='MochaLogger')
 
