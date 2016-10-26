@@ -133,7 +133,7 @@ class Synthesizer(threading.Thread):
 				self.updateFreq(newFreq)
 
 		self.updateSignal(frame_count)
-		self.runDebug(frame_count)
+		#self.runDebug(frame_count)
 		# dumb
 		return (self.amplitude*self.signal, pyaudio.paContinue)
 
