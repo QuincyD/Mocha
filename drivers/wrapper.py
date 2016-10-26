@@ -79,20 +79,34 @@ class LeapFrames(threading.Thread):
 					(numHands == 2 and self.hand == 'r' and not hand.is_left)
 				):
 
+					click = False
+					pointables = hand.pointables
+					for pointable in pointables:
+						if pointable.is_finger:
+							finger = Leap.Finger(pointable)
+
+							if not finger.type == 1:	#0: thumb, 1: index, 2: middle, etc
+								continue
+
+							dist = pointable.touch_distance
+							if dist < 0:
+								click = True
+								break
+
 					if _normalized:
 						normPos = self._cleanPos(
 							interactionBox.normalize_point(hand.palm_position)
 						)
 
-						self._queueOut.put(normPos)
+						self._queueOut.put((normPos, click))
 						break
 					else:
 						pos = self._cleanPos(hand.palm_position)
-						self._queueOut.put(pos)
+						self._queueOut.put((pos, click))
 						break
 
 		if self._queueOut.empty():
-			self._queueOut.put([])
+			self._queueOut.put((None, None))
 
 	# Returns the position data in a normalized form
 	def getNormPos(self):

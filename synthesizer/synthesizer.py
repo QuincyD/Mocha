@@ -58,7 +58,7 @@ class Synthesizer(threading.Thread):
 		logger.info("Synthesizer thread stopped")
 
 	def stopped(self):
-		return self._stop
+		return self._stop.isSet()
 
 	def request(self, function, *args, **kwargs):
 		self._queueIn.put((function, args, kwargs))

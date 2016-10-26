@@ -2,6 +2,7 @@
 
 import re
 import os.path
+import logging #TODO
 
 # Exception definition for this class
 class TrackError(Exception):
