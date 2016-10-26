@@ -73,6 +73,8 @@ class MainController:
 				normalized, click = None, None
 
 			#TODO figure out what needs to happen with click data
+			# need to bind events to mouse clicks and leap clicks
+			# raise the leap motion clicks to the gui class here.
 
 			if normalized:
 				# updating sound and UI with new frame

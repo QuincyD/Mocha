@@ -1,6 +1,6 @@
 #TODO update docstring info and style
 
-from trackInfo import TrackInfo
+from sythensizer.trackInfo import TrackInfo
 
 import threading #FIXME
 import operator

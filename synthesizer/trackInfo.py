@@ -1,16 +1,12 @@
 #TODO update docstyle
 
+from synthesizer.track import TrackError
+
 import re
 import os.path
 import logging #TODO
 
-# Exception definition for this class
-class TrackError(Exception):
-	def __init__(self, msg):
-		self.msg = msg
-	
-	def	__str__(self):
-		return self.msg
+logger = logging.getLogger(name='MochaLogger')
 
 class TrackInfo():
 	def __init__(self, num=-1):
