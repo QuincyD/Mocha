@@ -5,6 +5,7 @@ from synthesizer.synthesizer import Synthesizer
 
 import logging #TODO
 import Queue
+import time
 
 logger = logging.getLogger(name='MochaLogger')
 
@@ -64,14 +65,15 @@ class MainController:
 	# Function through which all necessary functions are looped (on the main thread)
 	def loop(self):
 		try:
-			# checking to see if a new frame is available
-			self.leap.request(self.leap.getNormPos)
-			try:
-				normalized, click = self.leapQueueOut.get(0.01)		#NOTE this value might need to be changed
-				#FIXME this doesnt work on windows for some reason
-
-			except Queue.Empty:
-				normalized, click = None, None #FIXME possible the queue starts to fill, need to clean?
+			while True: #FIXME should be its own function (this is sloppy)
+				try:
+					time_, normalized, click = self.leapQueueOut.get()
+					if time.time() - time_ < 0.02 or time.time() < time_:
+						break
+	
+				except Queue.Empty:
+					time_, normalized, click = time.time(), None, None
+					break
 
 			#TODO figure out what needs to happen with click data
 			# need to bind events to mouse clicks and leap clicks

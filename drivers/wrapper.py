@@ -6,6 +6,7 @@ import sys
 import logging
 import threading
 import Queue
+import time
 
 logger = logging.getLogger(name='MochaLogger')
 
@@ -73,15 +74,15 @@ class LeapFrames(threading.Thread):
 							interactionBox.normalize_point(hand.palm_position)
 						)
 
-						self._queueOut.put((normPos, click))
+						self._queueOut.put((time.time(), normPos, click))
 						break
 					else:
 						pos = self._cleanPos(hand.palm_position)
-						self._queueOut.put((pos, click))
+						self._queueOut.put((time.time(), pos, click))
 						break
 
 		if self._queueOut.empty():
-			self._queueOut.put((None, None))
+			self._queueOut.put((time.time(), None, None))
 
 	# Returns the position data in a normalized form
 	def getNormPos(self):
@@ -94,12 +95,9 @@ class LeapFrames(threading.Thread):
 		logger.info("LeapMotion thread started")
 		while not self._stop.isSet():
 			try:
-				function, args, kwargs = self._queueIn.get(False)
-				function(*args, **kwargs)
-				self._freshFrame = False
+				self.getNormPos()
 			except Queue.Empty:
-				self._frame = self._getFrame()
-				self._freshFrame = True
+				pass
 
 	def stop(self):
 		self._stop.set()
