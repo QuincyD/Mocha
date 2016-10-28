@@ -94,10 +94,7 @@ class LeapFrames(threading.Thread):
 	def run(self):
 		logger.info("LeapMotion thread started")
 		while not self._stop.isSet():
-			try:
-				self.getNormPos()
-			except Queue.Empty:
-				pass
+			self.getNormPos()
 
 	def stop(self):
 		self._stop.set()

@@ -124,7 +124,7 @@ class GUI(threading.Thread):
 		logger.info("GUI thread started")
 		while not self._stop.isSet():
 			try:
-				function, args, kwargs = self._queueIn.get(0.01)
+				function, args, kwargs = self._queueIn.get(0.01) #NOTE this may be a bad thing
 				function(*args, **kwargs)
 			except Queue.Empty:
 				pass
