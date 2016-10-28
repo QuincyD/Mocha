@@ -68,9 +68,10 @@ class MainController:
 			self.leap.request(self.leap.getNormPos)
 			try:
 				normalized, click = self.leapQueueOut.get(0.01)		#NOTE this value might need to be changed
+				#FIXME this doesnt work on windows for some reason
 
 			except Queue.Empty:
-				normalized, click = None, None
+				normalized, click = None, None #FIXME possible the queue starts to fill, need to clean?
 
 			#TODO figure out what needs to happen with click data
 			# need to bind events to mouse clicks and leap clicks

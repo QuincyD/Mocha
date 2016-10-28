@@ -56,7 +56,7 @@ def main():
 
 	This is the main method for running Mocha. The function defines all
 	necessary utilities for the MainController to run. Additionally, it
-	controlls the main loop of Mocha.
+ 		controlls the main loop of Mocha.
 
 	Important: the main loop and the MainController exist on a thread
 	together. All other modules should be running on separate threads.
