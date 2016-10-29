@@ -18,7 +18,7 @@ logger = logging.getLogger(name='MochaLogger')
 class Synthesizer(threading.Thread):
 	'Contains methods to generate sin waves, update signal properties, and handle play back'
 
-	def __init__(self, queueIn, frequency, amplitude, baseFrequency, maxDiffFrequency):
+	def __init__(self, queueIn, frequency, amplitude, baseFrequency, maxDiffFrequency, noLeap=False):
 		super(Synthesizer, self).__init__()
 		logger.info("Synthesizer thread initialized")
 
@@ -35,6 +35,10 @@ class Synthesizer(threading.Thread):
 		self.signal = None
 		self.csvReader = None
 		self.pos = None
+		callback = self.leapCallback
+
+		if noLeap:
+			callback = self.noLeapCallback
 
 		# Create pyaudio stream
 		p = pyaudio.PyAudio()
@@ -43,8 +47,8 @@ class Synthesizer(threading.Thread):
 					channels=1,
 					rate=self.fs,
 					output=True,
-					frames_per_buffer=4096,
-					stream_callback=self.leapCallback)
+					frames_per_buffer=16,
+					stream_callback=callback)
 
 	def __enter__(self):
 		return self
@@ -106,18 +110,22 @@ class Synthesizer(threading.Thread):
 			self.csvIndex = 0;
 
 		self.pos = self.csvReader[self.csvIndex]
-		self.csvIndex += 1
+		self.csvIndex += 10
 
 		# print pos
-		print self.pos
-		sys.stdout.flush()
+		# print self.pos
 		#Translate y values from 0-600 to be in 3rd octave
-		newFreq = self.baseFreq + self.diffBaseMax*float(self.pos[0])
-
+		# print (self.pos[1])
+		newFreq = self.baseFreq + self.diffBaseMax*float(self.pos[1])
+		# print self.frequency
+		sys.stdout.flush()
 		if newFreq != self.frequency:
 			self.updateFreq(newFreq)
-
+		# print self.frequency
+		sys.stdout.flush()
 		self.updateSignal(frame_count)
+		print str(self.signal[0]) + ' ' + str(self.signal[-1])
+		sys.stdout.flush()
 		# self.runDebug(frame_count)
 
 		return (self.amplitude*self.signal, pyaudio.paContinue)
@@ -133,7 +141,16 @@ class Synthesizer(threading.Thread):
 			if newFreq != self.frequency:
 				self.updateFreq(newFreq)
 
+		oldLastSignal = "None"
+		try:
+			oldLastSignal = str(self.signal[-1])
+		except:
+			pass
 		self.updateSignal(frame_count)
+		logger.info(oldLastSignal + ' ' + str(self.signal[0]))
+		print "Two at end " + str(self.signal[-2]) + ' ' + str(self.signal[-1])
+		print "Last and new " + oldLastSignal + ' ' + str(self.signal[0])
+		sys.stdout.flush()
 		#self.runDebug(frame_count)
 		# dumb
 		return (self.amplitude*self.signal, pyaudio.paContinue)
@@ -152,5 +169,5 @@ class Synthesizer(threading.Thread):
 		self.stream.close()
 
 if __name__ == "__main__":
-	with Synthesizer(Queue.Queue(), 880, 1.0, 230, 880) as synthesizer:
+	with Synthesizer(Queue.Queue(), 880, .9, 230, 880, True) as synthesizer:
 		synthesizer.run()
