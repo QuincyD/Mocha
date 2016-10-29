@@ -6,14 +6,11 @@ import sys
 import logging
 import threading
 import Queue
+import time
 
 logger = logging.getLogger(name='MochaLogger')
 
 class LeapFrames(threading.Thread):
-	# Class variables for the range of the Leap Motion
-	#leapX = 480	# NOTE depreciated
-	#leapY = 500	# NOTE depreciated
-
 	def __init__(self, queueOut, hand):
 		super(LeapFrames, self).__init__()
 		logger.info("LeapMotion thread intialized")
@@ -38,27 +35,6 @@ class LeapFrames(threading.Thread):
 		tmp[1] = 1 - tmp[1]		# need to invert ycoord for GUI
 
 		return tmp
-
-	def stop(self):
-		self._stop.set()
-		logger.info("LeapMotion thread stopped")
-
-	def stopped(self):
-		return self._stop.isSet()
-
-	def request(self, function, *args, **kwargs):
-		self._queueIn.put((function, args, kwargs))
-
-	def run(self):
-		logger.info("LeapMotion thread started")
-		while not self._stop.isSet():
-			try:
-				function, args, kwargs = self._queueIn.get(False)
-				function(*args, **kwargs)
-				self._freshFrame = False
-			except Queue.Empty:
-				self._frame = self._getFrame()
-				self._freshFrame = True
 
 	def _getFrame(self):
 		return self.controller.frame()
@@ -98,46 +74,39 @@ class LeapFrames(threading.Thread):
 							interactionBox.normalize_point(hand.palm_position)
 						)
 
-						self._queueOut.put((normPos, click))
+						self._queueOut.put((time.time(), normPos, click))
 						break
 					else:
 						pos = self._cleanPos(hand.palm_position)
-						self._queueOut.put((pos, click))
+						self._queueOut.put((time.time(), pos, click))
 						break
 
 		if self._queueOut.empty():
-			self._queueOut.put((None, None))
+			self._queueOut.put((time.time(), None, None))
 
 	# Returns the position data in a normalized form
 	def getNormPos(self):
 		self.getPos(True)
 
-	# NOTE function should no longer be need since the leap motion SDK
-	# is now taking care of this for us
-	def _normalize(self, pos):
-		if pos:
-			# xCoord is based on the origin at the center of LM
-			xCoord = (pos[0] + (self.leapX / 2)) / self.leapX
+	def request(self, function, *args, **kwargs):
+		self._queueIn.put((function, args, kwargs))
 
-			# yCoord needs to be flipped
-			yCoord = 1 - (pos[1] / self.leapY)
-			
-			# making sure the coords are between 0 and 1
-			if xCoord < 0:
-				xCoord = 0
-			elif xCoord > 1:
-				xCoord = 1
+	def run(self):
+		logger.info("LeapMotion thread started")
+		while not self._stop.isSet():
+			self.getNormPos()
 
-			if yCoord < 0:
-				yCoord = 0
-			elif yCoord > 1:
-				yCoord = 1
+	def stop(self):
+		self._stop.set()
+		logger.info("LeapMotion thread stopped")
 
-			# returning the same zCoord since it's not currently in use
-			tmp = [xCoord, yCoord, pos[2]]
-			return tmp
+	def stopped(self):
+		return self._stop.isSet()
+
+
 
 def debug():
+	"""Debug code for testing the class."""
 	# starting logger
 	from mochaLogger import MochaLogger
 	MochaLogger()
