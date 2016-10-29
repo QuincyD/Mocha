@@ -64,11 +64,12 @@ class MainController:
 
 	# Function through which all necessary functions are looped (on the main thread)
 	def loop(self):
+		loopStart = time.time()
 		try:
 			while True: #FIXME should be its own function (this is sloppy)
 				try:
 					time_, normalized, click = self.leapQueueOut.get()
-					if time.time() - time_ < 0.02 and self.leapQueueOut.qsize() < 20: #NOTE not sure how much i like this
+					if loopStart - time_ < 0.02 and self.leapQueueOut.qsize() < 20: #NOTE not sure how much i like this
 						break
 	
 				except Queue.Empty:
@@ -98,6 +99,11 @@ class MainController:
 		except:
 			self.shutdown()
 			raise
+
+		finally:
+			while True:
+				if time.time() - loopStart >= 0.01:
+					break
 
 	def shutdown(self):
 		self.leap.stop()

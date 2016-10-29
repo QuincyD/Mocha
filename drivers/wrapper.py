@@ -47,6 +47,10 @@ class LeapFrames(threading.Thread):
 		numHands = len(frame.hands)
 		interactionBox = frame.interaction_box
 
+		time_ = time.time()
+		pos = None
+		click = False
+
 		for hand in frame.hands:
 			# checking if the current hand is the preferred hand given that 2 hands are in range
 			if (
@@ -55,7 +59,6 @@ class LeapFrames(threading.Thread):
 					(numHands == 2 and self.hand == 'r' and not hand.is_left)
 				):
 
-					click = False
 					pointables = hand.pointables
 					for pointable in pointables:
 						if pointable.is_finger:
@@ -70,19 +73,16 @@ class LeapFrames(threading.Thread):
 								break
 
 					if _normalized:
-						normPos = self._cleanPos(
+						pos = self._cleanPos(
 							interactionBox.normalize_point(hand.palm_position)
 						)
 
-						self._queueOut.put((time.time(), normPos, click))
 						break
 					else:
 						pos = self._cleanPos(hand.palm_position)
-						self._queueOut.put((time.time(), pos, click))
 						break
 
-		if self._queueOut.empty():
-			self._queueOut.put((time.time(), None, None))
+		self._queueOut.put((time_, pos, click))
 
 	# Returns the position data in a normalized form
 	def getNormPos(self):
