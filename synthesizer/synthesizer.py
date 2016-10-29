@@ -105,13 +105,14 @@ class Synthesizer(threading.Thread):
 				self.csvReader = list(csv.reader(f))
 			self.csvIndex = 0;
 
-		row = self.csvReader[self.csvIndex]
+		self.pos = self.csvReader[self.csvIndex]
 		self.csvIndex += 1
 
-		# print row
+		# print pos
+		print self.pos
 		sys.stdout.flush()
 		#Translate y values from 0-600 to be in 3rd octave
-		newFreq = self.baseFreq + self.diffBaseMax*float(row[1])/600
+		newFreq = self.baseFreq + self.diffBaseMax*float(self.pos[0])
 
 		if newFreq != self.frequency:
 			self.updateFreq(newFreq)
@@ -151,5 +152,5 @@ class Synthesizer(threading.Thread):
 		self.stream.close()
 
 if __name__ == "__main__":
-	with Synthesizer(880, 1.0, 230, 880) as synthesizer:
+	with Synthesizer(Queue.Queue(), 880, 1.0, 230, 880) as synthesizer:
 		synthesizer.run()
