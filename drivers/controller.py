@@ -14,18 +14,18 @@ logger = logging.getLogger(name='MochaLogger')
 screenX = 1000	#TODO set these to full screen size from Tkinter
 screenY = 500
 
-class MainController:	
+class MainController:
 	def __init__(self, hand, programController):
 		### Initialize variables
 		self.hand = hand
 		self.programController = programController
-		
+
 		self.leapQueueOut = Queue.Queue()
 		self.leap = LeapFrames(self.leapQueueOut, self.hand)
 		self.leap.daemon = True
 
 		self.synthQueueIn = Queue.Queue()
-		self.synth = Synthesizer(self.synthQueueIn, 880, 1.0, 230, 880)
+		self.synth = Synthesizer(self.synthQueueIn, 230, 880)
 		self.synth.daemon = True
 
 		### Starting the GUI
@@ -35,9 +35,9 @@ class MainController:
 		self.tk.protocol("WM_DELETE_WINDOW", self.onClosing)
 
 		# setting up a canvas
-		self.canvas = Tkinter.Canvas(self.tk, width=screenX, 
+		self.canvas = Tkinter.Canvas(self.tk, width=screenX,
 			height=screenY, bd=0, highlightthickness=0)
-		
+
 		# starting a gui class
 		self.guiQueueIn = Queue.Queue()
 		self.gui = GUI(self.guiQueueIn, self.canvas, screenX, screenY)
@@ -71,7 +71,7 @@ class MainController:
 					time_, normalized, click = self.leapQueueOut.get()
 					if loopStart - time_ < 0.02 and self.leapQueueOut.qsize() < 20: #NOTE not sure how much i like this
 						break
-	
+
 				except Queue.Empty:
 					time_, normalized, click = time.time(), None, None
 					break
@@ -100,10 +100,6 @@ class MainController:
 			self.shutdown()
 			raise
 
-		finally:
-			while True:
-				if time.time() - loopStart >= 0.01:
-					break
 
 	def shutdown(self):
 		self.leap.stop()

@@ -1,10 +1,6 @@
 import pyaudio
 import numpy as np
 import time
-# import matplotlib as mpl
-# mpl.rcParams['backend'] = "qt4agg"
-# mpl.rcParams['backend.qt4'] = "PySide"
-# from matplotlib.pyplot import figure, show
 import csv
 import sys
 import threading
@@ -18,23 +14,24 @@ logger = logging.getLogger(name='MochaLogger')
 class Synthesizer(threading.Thread):
 	'Contains methods to generate sin waves, update signal properties, and handle play back'
 
-	def __init__(self, queueIn, frequency, amplitude, baseFrequency, maxDiffFrequency, noLeap=False):
+	def __init__(self, queueIn, baseFrequency, maxDiffFrequency, noLeap=False):
 		super(Synthesizer, self).__init__()
 		logger.info("Synthesizer thread initialized")
 
 		# Set up signal properties
 		self._stop = threading.Event()
 		self._queueIn = queueIn
-		self.frequency = frequency
-		self.amplitude = amplitude
+		self.frequency = (baseFrequency + maxDiffFrequency)/2.0
+		self.amplitude = 0.0
 		self.phase = 0
 		self.fs = 44100
-		self.time = 0 #time.time()
+		self.time = 0
 		self.baseFreq = baseFrequency
 		self.diffBaseMax = maxDiffFrequency
 		self.signal = None
 		self.csvReader = None
 		self.pos = None
+		self.firstSignal = False
 		callback = self.leapCallback
 
 		if noLeap:
@@ -47,7 +44,7 @@ class Synthesizer(threading.Thread):
 					channels=1,
 					rate=self.fs,
 					output=True,
-					frames_per_buffer=16,
+					frames_per_buffer=4096/4,
 					stream_callback=callback)
 
 	def __enter__(self):
@@ -77,31 +74,23 @@ class Synthesizer(threading.Thread):
 			except Queue.Empty:
 				pass
 
-
-	def updateSignal(self, frame_count):
-		#TODO: implement time tracking
-		# (np.sin(phase+2*np.pi*freq*(TT+np.arange(frame_count)/float(RATE))))
+	def updateSignal(self, frame_count, fadein = False, fadeout=False):
 		internal = 2*np.pi*self.frequency*(self.time + np.arange(frame_count)/float(self.fs)) + self.phase
 		self.signal = (np.sin(internal)).astype(np.float32)
-		# self.phase = internal[-1] % (2*np.pi)
+		if fadein:
+			self.signal = np.linspace(0.0, 1.0, frame_count).astype(np.float32) * self.signal
+			self.amplitude = 1.0
+		elif fadeout:
+			self.signal = np.linspace(1.0, 0.0, frame_count).astype(np.float32) * self.amplitude * self.signal
+			self.amplitude = 0.0
+		else:
+			self.signal = self.signal*self.amplitude
 		self.time += frame_count/float(self.fs)
-
 
 	# Updates the frequency and also modifies phase so the signal's vertical positioning lines up
 	def updateFreq(self, frequency):
-		#currPhase = (2 * np.pi * self.time * self.frequency + self.phase) % (2*np.pi)
-		#newPhase = (2 * np.pi * self.time * frequency + self.phase) % (2*np.pi)
-		#self.phase = currPhase - newPhase
 		self.phase = (2 * np.pi * self.time * (self.frequency - frequency) + self.phase) % (2*np.pi)
 		self.frequency = frequency
-
-	# def runDebug(self, frame_count):
-	# 	fig = figure()
-	# 	ax1 = fig.add_subplot(211)
-	# 	ax1.plot(np.arange(frame_count)/float(self.fs), self.signal)
-	# 	ax1.grid(True)
-	# 	show()
-	# 	i = raw_input("Press Enter to continue...")
 
 	def noLeapCallback(self, in_data, frame_count, time_info, status):
 		if not self.csvReader:
@@ -111,49 +100,45 @@ class Synthesizer(threading.Thread):
 
 		self.pos = self.csvReader[self.csvIndex]
 		self.csvIndex += 10
-
-		# print pos
-		# print self.pos
-		#Translate y values from 0-600 to be in 3rd octave
-		# print (self.pos[1])
 		newFreq = self.baseFreq + self.diffBaseMax*float(self.pos[1])
-		# print self.frequency
 		sys.stdout.flush()
 		if newFreq != self.frequency:
 			self.updateFreq(newFreq)
-		# print self.frequency
 		sys.stdout.flush()
 		self.updateSignal(frame_count)
 		print str(self.signal[0]) + ' ' + str(self.signal[-1])
 		sys.stdout.flush()
-		# self.runDebug(frame_count)
-
-		return (self.amplitude*self.signal, pyaudio.paContinue)
+		return (self.signal, pyaudio.paContinue)
 
 	def leapCallback(self, in_data, frame_count, time_info, status):
-		#print row
-		# sys.stdout.flush()
-
+		fadeout = False
 		if self.pos:
-		#Translate y values from 0-600 to be in 3rd octave
-			newFreq = self.baseFreq + self.diffBaseMax*float(self.pos[0])
+			playSignal = float(self.pos[1]) > .5
 
-			if newFreq != self.frequency:
+			#Translate y values from 0-600 to be in range baseFreq-(baseFreq+diffBaseMax)
+			newFreq = self.baseFreq + self.diffBaseMax*float(self.pos[0])
+			if playSignal and newFreq != self.frequency:
 				self.updateFreq(newFreq)
 
-		oldLastSignal = "None"
-		try:
-			oldLastSignal = str(self.signal[-1])
-		except:
-			pass
-		self.updateSignal(frame_count)
-		logger.info(oldLastSignal + ' ' + str(self.signal[0]))
-		print "Two at end " + str(self.signal[-2]) + ' ' + str(self.signal[-1])
-		print "Last and new " + oldLastSignal + ' ' + str(self.signal[0])
-		sys.stdout.flush()
-		#self.runDebug(frame_count)
-		# dumb
-		return (self.amplitude*self.signal, pyaudio.paContinue)
+			# Set the amplitude to zero if hand is above threshold, else transition amplitude
+			if playSignal and self.amplitude == 0.0:
+				self.firstSignal = True
+			elif not playSignal and self.amplitude != 0:
+				fadeout = True
+
+			# NOTE: Weird woodblock effect
+			# if playSignal and self.amplitude < 1.0:
+			# 	self.amplitude += .1
+			# elif playSignal:
+			# 	self.amplitude = .1
+			# else:
+			# 	self.amplitude = 0.0
+
+		# Generate the new signal and return it to pyaudio
+		self.updateSignal(frame_count, self.firstSignal, fadeout)
+		# No longer the first signal in a new playback "session"
+		self.firstSignal = False
+		return (self.signal, pyaudio.paContinue)
 
 	def setPos(self, pos):
 		self.pos = pos
@@ -169,5 +154,5 @@ class Synthesizer(threading.Thread):
 		self.stream.close()
 
 if __name__ == "__main__":
-	with Synthesizer(Queue.Queue(), 880, .9, 230, 880, True) as synthesizer:
+	with Synthesizer(Queue.Queue(), 230, 880, True) as synthesizer:
 		synthesizer.run()
