@@ -47,7 +47,7 @@ class Synthesizer(threading.Thread):
 					channels=1,
 					rate=self.fs,
 					output=True,
-					frames_per_buffer=16,
+					frames_per_buffer=4096/20,
 					stream_callback=callback)
 
 	def __enter__(self):

@@ -100,10 +100,6 @@ class MainController:
 			self.shutdown()
 			raise
 
-		finally:
-			while True:
-				if time.time() - loopStart >= 0.01:
-					break
 
 	def shutdown(self):
 		self.leap.stop()
