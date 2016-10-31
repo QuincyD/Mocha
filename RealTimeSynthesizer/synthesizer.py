@@ -112,10 +112,13 @@ class Synthesizer:
 		#Hacky solution but change method to leapPlay() for leapmotion control
 		self.stream.start_stream()
 		while self.stream.is_active():
-			time.sleep(0.1)
+			time.sleep(5)
+
+	def stopStream(self):
+		self.stream.stop_stream()
 
 	def closeStream(self):
-		self.stream.stop_stream()
+		self.stopStream()
 		self.stream.close()
 
 if __name__ == "__main__":
