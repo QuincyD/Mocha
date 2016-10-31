@@ -6,6 +6,7 @@ import sys
 import threading
 import logging
 import Queue
+#TODO: find way to import SciPy (for square and sawtooth). Pip fails to build wheel
 
 logger = logging.getLogger(name='MochaLogger')
 
