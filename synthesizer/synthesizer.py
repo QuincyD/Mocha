@@ -75,9 +75,16 @@ class Synthesizer(threading.Thread):
 			except Queue.Empty:
 				pass
 
-	def updateSignal(self, frame_count, fadein = False, fadeout=False):
+	def updateSignal(self, frame_count, fadein=False, fadeout=False):
 		internal = 2*np.pi*self.frequency*(self.time + np.arange(frame_count)/float(self.fs)) + self.phase
-		self.signal = (np.sin(internal)).astype(np.float32)
+		signal = (np.sin(internal)).astype(np.float32)
+		offset = 1.
+		noise1 = (np.sin(internal - offset)).astype(np.float32)
+		noise2 = (np.sin(internal + offset)).astype(np.float32)
+		self.signal = .2*noise1 + .2*noise2 + .6*signal
+		# print self.signal
+		# sys.stdout.flush()
+
 		if fadein:
 			self.signal = np.linspace(0.0, 1.0, frame_count).astype(np.float32) * self.signal
 			self.amplitude = 1.0
@@ -97,18 +104,19 @@ class Synthesizer(threading.Thread):
 		if not self.csvReader:
 			with open('output.txt', 'rb') as f:
 				self.csvReader = list(csv.reader(f))
-			self.csvIndex = 0;
+			self.csvIndex = 0
+			self.amplitude = 1.0
 
 		self.pos = self.csvReader[self.csvIndex]
-		self.csvIndex += 10
+		self.csvIndex += 1
 		newFreq = self.baseFreq + self.diffBaseMax*float(self.pos[1])
-		sys.stdout.flush()
+		# sys.stdout.flush()
 		if newFreq != self.frequency:
 			self.updateFreq(newFreq)
-		sys.stdout.flush()
+
 		self.updateSignal(frame_count)
-		print str(self.signal[0]) + ' ' + str(self.signal[-1])
-		sys.stdout.flush()
+		# print str(self.signal[0]) + ' ' + str(self.signal[-1])
+		# sys.stdout.flush()
 		return (self.signal, pyaudio.paContinue)
 
 	def leapCallback(self, in_data, frame_count, time_info, status):
