@@ -42,15 +42,15 @@ window.onload = function()
                   {
                       freq = 200+normalized[0]*440;
                       // console.log(freq);
-                      synth.updateFundFreq(freq);
+                      synthesizer.updateFundFreq(freq);
                   }
               }
           }
-      }, 1);
+      }, 5);
       setInterval(function() {
           var frame = my_controller.frame();
           output.innerHTML = 'Frame: ' + frame.id;
-      }, 50);
+      }, 33);
     });
     my_controller.connect();
 
