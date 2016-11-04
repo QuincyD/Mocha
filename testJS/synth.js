@@ -20,9 +20,14 @@ function Synth() {
     this.harm3.frequency.value = fundFreq * 4;
   };
 
-  this.changeVolume = function(element) {
+  this.changeVolumeSlider = function(element) {
     var fraction = parseInt(element.value) / parseInt(element.max);
-    this.volume.gain.value = fraction * fraction;
+    this.changeVolume(fraction);
+  };
+
+  this.changeVolume = function(normalized)
+  {
+    this.volume.gain.value = normalized * normalized;
   };
 
   this.detune = function(value) {
@@ -102,9 +107,9 @@ function Synth() {
 
   this.playback = function() {
     this.recorder.playTracks();
-  }
+  };
 
   this.getTracks = function() {
     return this.recorder.getTracks();
-  }
+  };
 }
