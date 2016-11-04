@@ -12,10 +12,14 @@ synth.maxFreq = 880;
 
 synth.updateFundFreq = function(fundFreq) {
   // Update with future harmonics
-  this.oscillator.frequency.value = fundFreq;
-  this.harm1.frequency.value = fundFreq * 2;
-  this.harm2.frequency.value = fundFreq * 3;
-  this.harm3.frequency.value = fundFreq * 4;
+  // console.log(fundFreq);
+  if (this.oscillator && fundFreq)
+  {
+    this.oscillator.frequency.value = fundFreq;
+    this.harm1.frequency.value = fundFreq * 2;
+    this.harm2.frequency.value = fundFreq * 3;
+    this.harm3.frequency.value = fundFreq * 4;
+  }
 };
 
 synth.changeVolume = function(element) {
