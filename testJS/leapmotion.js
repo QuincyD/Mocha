@@ -63,8 +63,8 @@ function LeapMotion() {
           //Updating sound
           if (normalized[0]) {    // Not sure if this is necessary. hand.palmPosition should not be true if it does not contain anything.
             freq = 200 + normalized[0] * 440;
-            synthesizer.updateFundFreq(freq);
-            synthesizer.changeVolume(1 - normalized[1]);
+            synthesizer.updateFundFreq(freq, true);
+            synthesizer.changeVolume(1 - normalized[1], true);
           }
         }
 
