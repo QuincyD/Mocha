@@ -5,3 +5,5 @@ function sleep(ms) {
 }
 
 var synthesizer = new Synth();
+
+// var tracks = synthesizer.getTracks();

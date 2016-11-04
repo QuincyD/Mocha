@@ -8,15 +8,16 @@ function Synth() {
 
   this.recorder = new Recorder(this.audioCtx);
 
+  window.onload = function() {
+    _this.waveform = new Waveform(_this.audioCtx);
+  };
+
   this.updateFundFreq = function(fundFreq) {
     // Update with future harmonics
-    if (this.oscillator && fundFreq)
-    {
-        this.oscillator.frequency.value = fundFreq;
-        this.harm1.frequency.value = fundFreq * 2;
-        this.harm2.frequency.value = fundFreq * 3;
-        this.harm3.frequency.value = fundFreq * 4;
-    }
+    this.oscillator.frequency.value = fundFreq;
+    this.harm1.frequency.value = fundFreq * 2;
+    this.harm2.frequency.value = fundFreq * 3;
+    this.harm3.frequency.value = fundFreq * 4;
   };
 
   this.changeVolume = function(element) {
@@ -82,12 +83,14 @@ function Synth() {
     this.updateFundFreq(440);
 
     // Connect the master gain slider to the recorder
-    this.recorder.connectOscillators([this.volume])
+    this.recorder.connectOscillators([this.volume]);
+    this.waveform.connectOscillators([this.volume]);
 
     this.oscillator.start();
     this.harm1.start();
     this.harm2.start();
     this.harm3.start();
+    this.waveform.visualize();
     return true;
   };
 
@@ -99,5 +102,9 @@ function Synth() {
 
   this.playback = function() {
     this.recorder.playTracks();
+  }
+
+  this.getTracks = function() {
+    return this.recorder.getTracks();
   }
 }

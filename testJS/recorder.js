@@ -41,4 +41,8 @@ function Recorder(audioContext) {
     this.trackManager.playAllTracks();
   };
 
+  this.getTracks = function() {
+    return this.trackManager.getTracks();
+  }
+
 }
