@@ -1,3 +1,5 @@
+// jshint esversion: 6
+
 function Synth() {
   var _this = this;
 
@@ -5,19 +7,48 @@ function Synth() {
 
   this.minFreq = 220;
   this.maxFreq = 880;
+  this.maxAmp = .75;
+  this.numHarm = 3;
+  this.harmOscillators = [];
+  this.harmGains = [];
+  this.harmSliders = [];
 
   this.recorder = new Recorder(this.audioCtx);
 
+  // Use function return to create callbacks to avoid creating closures inline
+  function createOnInput(i) {
+    return function() {
+      synthesizer.changeHarmVol(this.value, i);
+    };
+  }
+
   this.init = function() {
     _this.waveform = new Waveform(_this.audioCtx);
+
+    // Create the harmonic sliders
+    let x;
+    let harmonicDiv = document.getElementById("harmonicSliders");
+    for(let i = 0; i < this.numHarm; ++i)
+    {
+      x = document.createElement("INPUT");
+      x.setAttribute("type", "range");
+      x.min = "0";
+      x.max = "1";
+      x.step = ".01";
+      x.oninput = createOnInput(i);
+      harmonicDiv.appendChild(x);
+
+      this.harmSliders.push(x);
+    }
   };
 
   this.updateFundFreq = function(fundFreq) {
     // Update with future harmonics
     this.oscillator.frequency.value = fundFreq;
-    this.harm1.frequency.value = fundFreq * 2;
-    this.harm2.frequency.value = fundFreq * 3;
-    this.harm3.frequency.value = fundFreq * 4;
+    for(let i = 0; i < this.numHarm; ++i)
+    {
+      this.harmOscillators[i].frequency.value = fundFreq * (i + 2);
+    }
   };
 
   this.changeVolumeSlider = function(element) {
@@ -27,23 +58,15 @@ function Synth() {
 
   this.changeVolume = function(normalized)
   {
-    this.volume.gain.value = normalized * normalized;
+    this.volume.gain.value = normalized * normalized * this.maxAmp;
   };
 
   this.detune = function(value) {
     this.oscillator.detune.value = value;
   };
 
-  this.changeHarm1Vol = function(value) {
-    this.harm1vol.gain.value = value;
-  };
-
-  this.changeHarm2Vol = function(value) {
-    this.harm2vol.gain.value = value;
-  };
-
-  this.changeHarm3Vol = function(value) {
-    this.harm3vol.gain.value = value;
+  this.changeHarmVol = function(volume, index) {
+    this.harmGains[index].gain.value = volume;
   };
 
   this.changeFreq = function(element) {
@@ -53,9 +76,10 @@ function Synth() {
 
   this.stop = function() {
     this.oscillator.stop();
-    this.harm1.stop();
-    this.harm2.stop();
-    this.harm3.stop();
+    for(let i = 0; i < this.numHarm; ++i)
+    {
+      this.harmOscillators[i].stop();
+    }
     return false;
   };
 
@@ -64,26 +88,22 @@ function Synth() {
     // Create gain node that controls master volume
     this.volume = this.audioCtx.createGain();
     this.volume.connect(this.audioCtx.destination);
-    this.volume.gain.value = 0.7;
+    this.volume.gain.value = 0.7 * this.maxAmp;
     // Create base oscillator
     this.oscillator = this.audioCtx.createOscillator();
     this.oscillator.connect(this.volume);
     // Create harmonic oscillators with independent gain control
-    this.harm1 = this.audioCtx.createOscillator();
-    this.harm2 = this.audioCtx.createOscillator();
-    this.harm3 = this.audioCtx.createOscillator();
-    this.harm1vol = this.audioCtx.createGain();
-    this.harm2vol = this.audioCtx.createGain();
-    this.harm3vol = this.audioCtx.createGain();
-    this.harm1vol.connect(this.volume);
-    this.harm2vol.connect(this.volume);
-    this.harm3vol.connect(this.volume);
-    this.harm1vol.gain.value = 0.3;
-    this.harm2vol.gain.value = 0.3;
-    this.harm3vol.gain.value = 0.3;
-    this.harm1.connect(this.harm1vol);
-    this.harm2.connect(this.harm2vol);
-    this.harm3.connect(this.harm3vol);
+    this.harmOscillators = [];
+    this.harmGains = [];
+    for(let i = 0; i < this.numHarm; ++i)
+    {
+      this.harmOscillators.push(this.audioCtx.createOscillator());
+      this.harmGains.push(this.audioCtx.createGain());
+      this.harmGains[i].connect(this.volume);
+      // TODO: grab slider values
+      this.harmGains[i].gain.value = 0.2;
+      this.harmOscillators[i].connect(this.harmGains[i]);
+    }
 
     this.updateFundFreq(440);
 
@@ -92,9 +112,10 @@ function Synth() {
     this.waveform.connectOscillators([this.volume]);
 
     this.oscillator.start();
-    this.harm1.start();
-    this.harm2.start();
-    this.harm3.start();
+    for (let i = 0; i < this.numHarm; ++i)
+    {
+      this.harmOscillators[i].start();
+    }
     this.waveform.visualize();
     return true;
   };
