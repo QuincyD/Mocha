@@ -1,9 +1,11 @@
 <html>
     <head>
+        <script src="https://js.leapmotion.com/leap-0.6.4.js"></script>
         <script src="waveform.js"></script>
         <script src="synth.js"></script>
         <script src="trackManager.js"></script>
         <script src="recorder.js"></script>
+        <script src="leapmotion.js"></script>
         <script src="main.js"></script>
     </head>
     <body>
@@ -27,5 +29,7 @@
         <input type="range"  min="0" max="1" step=".01" value=".3" oninput="synthesizer.changeHarm1Vol(this.value)"/>
         <input type="range"  min="0" max="1" step=".01" value=".3" oninput="synthesizer.changeHarm2Vol(this.value)"/>
         <input type="range"  min="0" max="1" step=".01" value=".3" oninput="synthesizer.changeHarm3Vol(this.value)"/>
+        <br />
+        <div id=output></div>
     </body>
 </html>

@@ -8,7 +8,7 @@ function Synth() {
 
   this.recorder = new Recorder(this.audioCtx);
 
-  window.onload = function() {
+  this.init = function() {
     _this.waveform = new Waveform(_this.audioCtx);
   };
 

@@ -1,6 +1,6 @@
 // jshint esversion: 6
 
-window.onload = function()
+function LeapMotion()
 {
     var output = document.getElementById('output');
     let interactionBox = null;
@@ -27,7 +27,7 @@ window.onload = function()
                   }
               }
           }
-      }, 5);
+      }, 1);
       setInterval(function() {
           var frame = my_controller.frame();
           output.innerHTML = '<p>Frame: ' + frame.id + ' is ' + (frame.valid ? 'valid.</p>' : 'invalid.</p>');

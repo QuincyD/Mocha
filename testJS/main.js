@@ -6,4 +6,10 @@ function sleep(ms) {
 
 var synthesizer = new Synth();
 
+window.onload = function()
+{
+    LeapMotion();
+    synthesizer.init();
+};
+
 // var tracks = synthesizer.getTracks();
