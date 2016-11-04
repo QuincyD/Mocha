@@ -13,14 +13,16 @@ function LeapMotion() {
   // see Controller documentation for option details
   my_controller.on('connect', function() {
     setInterval(function() {
-      var frame = my_controller.frame();
+      let frame = my_controller.frame();
+      let hand = null;
+      let emptyFrame = false;
       if (frame.valid) {
         interactionBox = frame.interactionBox;
 
         //Determining which hand to use (prefers left)
         switch(frame.hands.length) {
           case 0:
-            hand = null;
+            emptyFrame = true;
             break;
 
           case 1:
@@ -36,7 +38,7 @@ function LeapMotion() {
             break;
 
           default:
-            hand = null;
+            emptyFrame = true;
             break;
         }
 
@@ -45,13 +47,13 @@ function LeapMotion() {
 
           //Determining click
           for (var i = 0; i < hand.pointables.length; i++) { //This check might be better to have in the UI update... need more info on how we are handling that though.
-            var pointable = hand.pointables[i]
+            var pointable = hand.pointables[i];
 
             if (pointable.type === 1) {
-              var dist = pointable.touchDistance
+              var dist = pointable.touchDistance;
 
               if (dist < 0) {
-                console.log("click")
+                console.log("click");
               }
 
               break;
@@ -64,6 +66,11 @@ function LeapMotion() {
             synthesizer.updateFundFreq(freq);
             synthesizer.changeVolume(1 - normalized[1]);
           }
+        }
+
+        //Checking if the frame was empty
+        if (emptyFrame) {
+          synthesizer.changeVolume(0);
         }
       }
     }, 1);
