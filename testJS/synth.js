@@ -5,8 +5,8 @@ function Synth() {
 
   this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-  this.minFreq = 220;
-  this.maxFreq = 880;
+  this.minFreq = 150;
+  this.maxFreq = 650;
   this.maxAmp = .75;
   this.numHarm = 3;
   this.harmOscillators = [];
@@ -41,8 +41,9 @@ function Synth() {
       x = document.createElement("INPUT");
       x.setAttribute("type", "range");
       x.min = "0";
-      x.max = "1";
+      x.max = ".5";
       x.step = ".01";
+      x.value = ".1";
       x.oninput = createOnInput(i);
       harmonicDiv.appendChild(x);
 
@@ -58,26 +59,31 @@ function Synth() {
   };
 
   this.updateFundFreq = function(fundFreq, fromLeap=false) {
-    // Update with future harmonics
-    this.oscillator.frequency.value = fundFreq;
-    for(let i = 0; i < this.numHarm; ++i)
+    if (this.oscillator)
     {
-      this.harmOscillators[i].frequency.value = fundFreq * (i + 2);
-    }
+      this.oscillator.frequency.value = fundFreq;
+      for(let i = 0; i < this.numHarm; ++i)
+      {
+        this.harmOscillators[i].frequency.value = fundFreq * (i + 2);
+      }
 
-    if(fromLeap)
-    {
-      this.freqSlider.value = fundFreq;
+      if(fromLeap)
+      {
+        this.freqSlider.value = fundFreq;
+      }
     }
   };
 
   this.changeVolume = function(normalized, fromLeap=false)
   {
-    this.volume.gain.value = normalized * normalized * this.maxAmp;
-
-    if (fromLeap)
+    if (this.volume)
     {
-      this.volumeSlider.value = normalized;
+      this.volume.gain.value = normalized * normalized * this.maxAmp;
+
+      if (fromLeap)
+      {
+        this.volumeSlider.value = normalized;
+      }
     }
   };
 
@@ -86,7 +92,9 @@ function Synth() {
   };
 
   this.changeHarmVol = function(volume, index) {
-    this.harmGains[index].gain.value = volume;
+    if (this.harmGains.length) {
+      this.harmGains[index].gain.value = volume;
+    }
   };
 
   this.changeFreq = function(element) {

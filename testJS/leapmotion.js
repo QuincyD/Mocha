@@ -70,7 +70,7 @@ function LeapMotion() {
 
         //Checking if the frame was empty
         if (emptyFrame) {
-          synthesizer.changeVolume(0);
+          synthesizer.changeVolume(0, true);
         }
       }
     }, 1);
