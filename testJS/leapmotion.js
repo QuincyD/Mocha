@@ -45,13 +45,13 @@ function LeapMotion() {
 
           //Determining click
           for (var i = 0; i < hand.pointables.length; i++) { //This check might be better to have in the UI update... need more info on how we are handling that though.
-            var pointable = hand.pointables[i]
+            var pointable = hand.pointables[i];
 
             if (pointable.type === 1) {
-              var dist = pointable.touchDistance
+              var dist = pointable.touchDistance;
 
               if (dist < 0) {
-                console.log("click")
+                console.log("click");
               }
 
               break;
@@ -61,8 +61,8 @@ function LeapMotion() {
           //Updating sound
           if (normalized[0]) {    // Not sure if this is necessary. hand.palmPosition should not be true if it does not contain anything.
             freq = 200 + normalized[0] * 440;
-            synthesizer.updateFundFreq(freq);
-            synthesizer.changeVolume(1 - normalized[1]);
+            synthesizer.updateFundFreq(freq, true);
+            synthesizer.changeVolume(1 - normalized[1], true);
           }
         }
       }

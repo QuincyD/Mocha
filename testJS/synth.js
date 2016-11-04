@@ -12,6 +12,8 @@ function Synth() {
   this.harmOscillators = [];
   this.harmGains = [];
   this.harmSliders = [];
+  this.volumeSlider = null;
+  this.freqSlider = null;
 
   this.recorder = new Recorder(this.audioCtx);
 
@@ -28,6 +30,12 @@ function Synth() {
     // Create the harmonic sliders
     let x;
     let harmonicDiv = document.getElementById("harmonicSliders");
+    this.volumeSlider = document.getElementById("masterVolume");
+    this.freqSlider = document.getElementById("fundamentalFrequency");
+    this.freqSlider.min = this.minFreq;
+    this.freqSlider.max = this.maxFreq;
+    let mid = Math.floor((this.maxFreq + this.minFreq) / 2);
+    this.updateFreqSlider(this.minFreq, this.maxFreq, mid);
     for(let i = 0; i < this.numHarm; ++i)
     {
       x = document.createElement("INPUT");
@@ -42,23 +50,35 @@ function Synth() {
     }
   };
 
-  this.updateFundFreq = function(fundFreq) {
+  this.updateFreqSlider = function(minVal, maxVal, value)
+  {
+    this.freqSlider.min = minVal;
+    this.freqSlider.max = maxVal;
+    this.freqSlider.value = value;
+  };
+
+  this.updateFundFreq = function(fundFreq, fromLeap=false) {
     // Update with future harmonics
     this.oscillator.frequency.value = fundFreq;
     for(let i = 0; i < this.numHarm; ++i)
     {
       this.harmOscillators[i].frequency.value = fundFreq * (i + 2);
     }
+
+    if(fromLeap)
+    {
+      this.freqSlider.value = fundFreq;
+    }
   };
 
-  this.changeVolumeSlider = function(element) {
-    var fraction = parseInt(element.value) / parseInt(element.max);
-    this.changeVolume(fraction);
-  };
-
-  this.changeVolume = function(normalized)
+  this.changeVolume = function(normalized, fromLeap=false)
   {
     this.volume.gain.value = normalized * normalized * this.maxAmp;
+
+    if (fromLeap)
+    {
+      this.volumeSlider.value = normalized;
+    }
   };
 
   this.detune = function(value) {
@@ -88,7 +108,8 @@ function Synth() {
     // Create gain node that controls master volume
     this.volume = this.audioCtx.createGain();
     this.volume.connect(this.audioCtx.destination);
-    this.volume.gain.value = 0.7 * this.maxAmp;
+    this.changeVolume(parseFloat(this.volumeSlider.value));
+    // this.volume.gain.value = 0.7 * this.maxAmp;
     // Create base oscillator
     this.oscillator = this.audioCtx.createOscillator();
     this.oscillator.connect(this.volume);
@@ -101,11 +122,11 @@ function Synth() {
       this.harmGains.push(this.audioCtx.createGain());
       this.harmGains[i].connect(this.volume);
       // TODO: grab slider values
-      this.harmGains[i].gain.value = 0.2;
+      this.harmGains[i].gain.value = parseFloat(this.harmSliders[i].value);
       this.harmOscillators[i].connect(this.harmGains[i]);
     }
 
-    this.updateFundFreq(440);
+    this.updateFundFreq(parseFloat(this.freqSlider.value));
 
     // Connect the master gain slider to the recorder
     this.recorder.connectOscillators([this.volume]);
