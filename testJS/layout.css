@@ -26,13 +26,17 @@ input[type=range]::-moz-range-thumb {
   background-color: #fff0cd;
   border-color: #55ffff;
 }
-.btn-mocha:hover,
+.btn-mocha:hover {
+  color: #280f00;
+  background-color: #55ffff;
+  border-color: #fff0cd;
+}
 .btn-mocha:focus,
 .btn-mocha:active,
 .btn-mocha.active {
   color: #280f00;
-  background-color: #55ffff;
-  border-color: #fff5cd;
+  background-color: #ddf2ed;
+  border-color: #55efef;
 }
 .btn-mocha.disabled:hover,
 .btn-mocha.disabled:focus,
