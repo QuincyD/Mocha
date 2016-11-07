@@ -10,6 +10,10 @@ body {
 	width: 100%;
 }
 
+.track-canvas {
+	background-color: #fff0cd;
+}
+
 /* All the same stuff for Firefox */
 input[type=range]::-moz-range-thumb {
   box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;

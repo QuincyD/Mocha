@@ -15,7 +15,6 @@ function Synth() {
   this.volumeSlider = null;
   this.freqSlider = null;
 
-  this.recorder = new Recorder(this.audioCtx);
 
   // Use function return to create callbacks to avoid creating closures inline
   function createOnInput(i) {
@@ -26,6 +25,7 @@ function Synth() {
 
   this.init = function() {
     _this.waveform = new Waveform(_this.audioCtx);
+    this.recorder = new Recorder(this.audioCtx);
 
     // Create the harmonic sliders
     let x;
