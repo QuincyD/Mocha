@@ -11,7 +11,6 @@ var LeapCursor = (function() {
         },
 
         update: function(e) {
-            console.log(e)
             s.style.left = (e[0] * 100) + '%';
             s.style.top = ((1 - e[1]) * 100) + '%';
         }
@@ -97,8 +96,6 @@ function LeapMotion() {
     }, 1);
     setInterval(function() {
       var frame = my_controller.frame();
-      output.innerHTML = '<p>Frame: ' + frame.id + ' is ' + (frame.valid ? 'valid.</p>' : 'invalid.</p>');
-
     }, 33);
   });
   my_controller.connect();
