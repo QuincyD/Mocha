@@ -1,0 +1,56 @@
+body {
+	color: #55ffff;
+	background-color: #280f00;
+}
+
+#can {
+	color: #280f00;
+	background-color: #fff0cd;
+	border-radius: 50px;
+	width: 100%;
+}
+
+/* All the same stuff for Firefox */
+input[type=range]::-moz-range-thumb {
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  border: 1px solid #55ffff;
+  height: 10px;
+  width: 12px;
+  border-radius: 3px;
+  background: #fff0cd;
+  cursor: pointer;
+}
+
+.btn-mocha {
+  color: #280f00;
+  background-color: #fff0cd;
+  border-color: #55ffff;
+}
+.btn-mocha:hover {
+  color: #280f00;
+  background-color: #55ffff;
+  border-color: #fff0cd;
+}
+.btn-mocha:focus,
+.btn-mocha:active,
+.btn-mocha.active {
+  color: #280f00;
+  background-color: #ddf2ed;
+  border-color: #55efef;
+}
+.btn-mocha.disabled:hover,
+.btn-mocha.disabled:focus,
+.btn-mocha.disabled:active,
+.btn-mocha.disabled.active,
+.btn-mocha[disabled]:hover,
+.btn-mocha[disabled]:focus,
+.btn-mocha[disabled]:active,
+.btn-mocha[disabled].active,
+fieldset[disabled] .btn-mocha:hover,
+fieldset[disabled] ..btn-mocha:focus,
+fieldset[disabled] ..btn-mocha:active,
+fieldset[disabled] ..btn-mocha.active {
+  color: #280f00;
+  background-color: #fff0cd;
+  border-color: #fff0cd;
+}

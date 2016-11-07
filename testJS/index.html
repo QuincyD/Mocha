@@ -1,6 +1,10 @@
-<html>
+<!doctype html>
+
+<html lang="en">
     <head>
-        <link rel="stylesheet" href="index.css" />
+        <meta charset="utf-8" />
+        <title>Mocha: Motion Composer</title>
+        <meta name="author" content="The Mocha Team" />
         <script src="https://js.leapmotion.com/leap-0.6.4.js"></script>
         <script src="waveform.js"></script>
         <script src="synth.js"></script>
@@ -8,27 +12,71 @@
         <script src="recorder.js"></script>
         <script src="leapmotion.js"></script>
         <script src="main.js"></script>
+
+    <!-- Bootstrap -->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <!--CSS stylesheet-->
+    <link rel="stylesheet" type="text/css" href="layout.css">
+<!--
+<style>
+body {
+    background-color: #fff0cd;
+}
+</style>-->
+
+
     </head>
     <body>
-        <canvas id="can" width="1000" height="300">
-        </canvas>
-        <button onClick="synthesizer.toggle()">Toggle</button>
-        <button onClick="synthesizer.playback()">Playback Recording</button>
-        <br />
-        <label>Amplitude: </label>
-        <input id="masterVolume" type="range"  min="0" max="1" step=".01" value=".75" oninput="synthesizer.changeVolume(this.value)"/>
-        <br />
-        <label>Frequency: </label>
-        <input id="fundamentalFrequency" type="range"  min="0" max="100" value="50" oninput="synthesizer.changeFreq(this)"/>
-        <br />
-        <label>Detune: </label>
-        <input type="range"  min="0" max="100" value="0" oninput="synthesizer.detune(this.value)"/>
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+      
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <script src = "//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 
-        <br /><br />
-        <label>Harmonic Amplitudes: </label>
-        <br  />
-        <div id="harmonicSliders"></div>
-        <br />
-        <div id=output></div>
+        <div class="containter">
+            <div class="row">
+                <div class="col-md-8">
+                    <canvas id="can" width="1000px" height="350px"></canvas>
+                </div>
+                <div class="col-md-4">
+                    <br />
+                    <label>Amplitude: </label>
+                    <input id="masterVolume" type="range"  min="0" max="1" step=".01" value=".75" oninput="synthesizer.changeVolume(this.value)"/>
+                    <br />
+                    <label>Frequency: </label>
+                    <input id="fundamentalFrequency" type="range"  min="0" max="100" value="50" oninput="synthesizer.changeFreq(this)"/>
+                    <br />
+                    <label>Detune: </label>
+                    <input type="range"  min="0" max="100" value="0" oninput="synthesizer.detune(this.value)"/>
+
+                    <br /><br />
+                    <label>Harmonic Amplitudes: </label>
+                    <br  />
+                    <div id="harmonicSliders"></div>
+                    <br />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8">
+                    <button onClick="synthesizer.toggle()" class="btn btn-mocha">Toggle</button>
+                    <button onClick="synthesizer.playback()" class="btn btn-mocha">Playback Recording</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+
+                </div>
+
+            </div>
+        </div>
+
     </body>
 </html>
