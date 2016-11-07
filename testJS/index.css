@@ -1,0 +1,9 @@
+.circleBase {
+	border-radius: 50%;
+}
+
+.cursor {
+	width: 20px;
+	height: 20px;
+	background: red;
+}

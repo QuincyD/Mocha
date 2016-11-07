@@ -1,5 +1,23 @@
 // jshint esversion: 6
 
+var LeapCursor = (function() {
+    var s = document.createElement('div');
+    s.style.position = 'absolute';
+    s.className = "circleBase cursor";
+
+    return {
+        init: function() {
+            document.body.appendChild(s);
+        },
+
+        update: function(e) {
+            console.log(e)
+            s.style.left = (e[0] * 100) + '%';
+            s.style.top = ((1 - e[1]) * 100) + '%';
+        }
+    };
+}());
+
 function LeapMotion() {
   var output = document.getElementById('output');
   let interactionBox = null;
@@ -66,17 +84,21 @@ function LeapMotion() {
             synthesizer.updateFundFreq(freq, true);
             synthesizer.changeVolume(1 - normalized[1], true);
           }
+
+          //update cursor
+          LeapCursor.update(normalized);
         }
 
         //Checking if the frame was empty
         if (emptyFrame) {
-          synthesizer.changeVolume(0);
+          synthesizer.changeVolume(0, true);
         }
       }
     }, 1);
     setInterval(function() {
       var frame = my_controller.frame();
       output.innerHTML = '<p>Frame: ' + frame.id + ' is ' + (frame.valid ? 'valid.</p>' : 'invalid.</p>');
+
     }, 33);
   });
   my_controller.connect();

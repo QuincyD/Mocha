@@ -8,6 +8,7 @@ var synthesizer = new Synth();
 
 window.onload = function() {
   LeapMotion();
+  LeapCursor.init();
   synthesizer.init();
 };
 
