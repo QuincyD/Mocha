@@ -58,3 +58,13 @@ fieldset[disabled] ..btn-mocha.active {
   background-color: #fff0cd;
   border-color: #fff0cd;
 }
+
+.circleBase {
+  border-radius: 50%;
+}
+
+.cursor {
+  width: 20px;
+  height: 20px;
+  background: red;
+}
