@@ -1,15 +1,18 @@
 // jshint esversion: 6
 
+//Object for controlling the LeapMotion cursor
 var LeapCursor = (function() {
     var s = document.createElement('div');
     s.style.position = 'absolute';
     s.className = "circleBase cursor";
 
     return {
+        //Creates a cursor object on the screen
         init: function() {
             document.body.appendChild(s);
         },
 
+        //Updates the position of the cursor object
         update: function(e) {
             s.style.left = (e[0] * 100) + '%';
             s.style.top = ((1 - e[1]) * 100) + '%';
@@ -18,93 +21,100 @@ var LeapCursor = (function() {
 }());
 
 function LeapMotion() {
-  var output = document.getElementById('output');
-  let interactionBox = null;
-  let normalized = null;
-  let freq = null;
+  //Variables for the function
+  var output = document.getElementById('output');   //TODO @Joe is this needed?
+  var freq = null;
 
+  //Variables specific to the Leap Motion functionality
+  var frame = null;
+  var interactionBox = null;
+  var normalized = null;
+  var hand = null;
+  var emptyFrame = false;
+
+  //Setting up a new controller object for the Leap Motion
   var my_controller = new Leap.Controller({
     frameEventName: 'deviceFrame',
     enableGestures: true
   });
+
+  function defaultSound() {
+    synthesizer.changeVolume(0, true);
+  };
+
   // see Controller documentation for option details
   my_controller.on('connect', function() {
     setInterval(function() {
-      let frame = my_controller.frame();
-      let hand = null;
-      let emptyFrame = false;
-      if (frame.valid) {
-        interactionBox = frame.interactionBox;
+      frame = my_controller.frame();
+      hand = null;
+      emptyFrame = false;
 
-        //Determining which hand to use (prefers left)
-        switch(frame.hands.length) {
-          case 0:
-            emptyFrame = true;
-            break;
+      //Making sure the frame is valid (not sure when it is not...)
+      if (! frame.valid) {
+        defaultSound();
+        return;
+      }
 
-          case 1:
+      interactionBox = frame.interactionBox;
+
+      //Determining which hand to use (prefers left)
+      switch(frame.hands.length) {
+        case 0:
+          emptyFrame = true;
+          hand = normalized = null;
+          break;
+
+        case 1:
+          hand = frame.hands[0];
+          break;
+
+        case 2:
+          if (frame.hands[0].type === "Left") {
             hand = frame.hands[0];
-            break;
-
-          case 2:
-            if (frame.hands[0].type === "Left") {
-              hand = frame.hands[0];
-            } else {
-              hand = frame.hands[1];
-            }
-            break;
-
-          default:
-            emptyFrame = true;
-            break;
-        }
-
-        if (hand && hand.palmPosition) {
-          normalized = interactionBox.normalizePoint(hand.palmPosition);
-
-          //Determining click
-          for (var i = 0; i < hand.pointables.length; i++) { //This check might be better to have in the UI update... need more info on how we are handling that though.
-            var pointable = hand.pointables[i];
-
-            if (pointable.type === 1) {
-              var dist = pointable.touchDistance;
-
-              if (dist < 0) {
-                console.log("click");
-              }
-
-              break;
-            }
+          } else {
+            hand = frame.hands[1];
           }
+          break;
 
-          //Updating sound
-          if (normalized[0]) {    // Not sure if this is necessary. hand.palmPosition should not be true if it does not contain anything.
-            freq = 200 + normalized[0] * 440;
-            synthesizer.updateFundFreq(freq, true);
-            synthesizer.changeVolume(1 - normalized[1], true);
-          }
+        default:
+          emptyFrame = true;
+          hand = normalized = null;
+          break;
+      }
 
-          //update cursor
+      //Checking if the frame was empty
+      //Kinda dumb to do it this way, but the variable is needed to update the UI
+      if (emptyFrame) {
+        defaultSound();
+        return;
+      }
+
+      //Ensuring that a hand exists with a position
+      if (hand) {
+        normalized = interactionBox.normalizePoint(hand.palmPosition);
+
+        //Updating sound
+        freq = 200 + normalized[0] * 440;
+        synthesizer.updateFundFreq(freq, true);
+        synthesizer.changeVolume(1 - normalized[1], true);
+      }
+    }, 1);
+
+    setInterval(function() {
+      //Ensuring a hand existed in the last frame
+      if (hand) {
+        //Ensuring the hand had a normalized position assigned to it
+        if (normalized) {
+          //Update cursor
           LeapCursor.update(normalized);
         }
 
-        //Checking if the frame was empty
-        if (emptyFrame) {
-          synthesizer.changeVolume(0, true);
-        }
+        //Determining when to click
+        
       }
-    }, 1);
-    setInterval(function() {
-      var frame = my_controller.frame();
     }, 33);
+
   });
+
   my_controller.connect();
-
-    // Leap.loop(function (frame) {
-    //     // let pos = '';
-    //
-    //     output.innerHTML = 'Frame: ' + frame.id;
-    // });
-
-
 }
