@@ -98,7 +98,7 @@ function LeapMotion() {
         synthesizer.updateFundFreq(freq, true);
         synthesizer.changeVolume(1 - normalized[1], true);
       }
-    }, 1);
+    }, 4);
 
     setInterval(function() {
       //Ensuring a hand existed in the last frame
@@ -110,7 +110,7 @@ function LeapMotion() {
         }
 
         //Determining when to click
-        
+
       }
     }, 33);
 
