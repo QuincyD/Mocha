@@ -107,7 +107,7 @@ function TrackManager() {
 
     // Create an html5 audio object to hold the audio data
     var audioObj = new Audio(blobUrl);
-    audioObj.preload = "metadata"; // Preload metadata for duration info
+    audioObj.preload = "auto"; // Preload metadata for duration info
     audioObj.id = "track-" + trackId; // Give it a unique name just in case
 
     // Once we've loaded the metadata for this audio object
