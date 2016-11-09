@@ -61,10 +61,14 @@ fieldset[disabled] ..btn-mocha.active {
 
 .circleBase {
   border-radius: 50%;
+  width: 20px;
+  height: 20px;
 }
 
 .cursor {
-  width: 20px;
-  height: 20px;
   background: red;
+}
+
+.cursorClick {
+  background: green;
 }

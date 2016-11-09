@@ -16,6 +16,14 @@ var LeapCursor = (function() {
         update: function(e) {
             s.style.left = (e[0] * 100) + '%';
             s.style.top = ((1 - e[1]) * 100) + '%';
+        },
+
+        down: function() {
+          s.className = "circleBase cursorClick";
+        },
+
+        up: function() {
+          s.className = "circleBase cursor"
         }
     };
 }());
@@ -31,6 +39,7 @@ function LeapMotion() {
   var normalized = null;
   var hand = null;
   var emptyFrame = false;
+  var clicking = false;
 
   //Setting up a new controller object for the Leap Motion
   var my_controller = new Leap.Controller({
@@ -110,7 +119,22 @@ function LeapMotion() {
         }
 
         //Determining when to click
-        
+        let pointIndex = hand.finger(hand.indexFinger.id);
+        let zone = pointIndex.touchZone;
+
+        if (zone === "touching" && ! clicking) {
+          LeapCursor.down();
+          clicking = true;
+
+          //creating click down event
+          console.log("click");
+        } else if (zone === "hovering" && clicking) {
+          LeapCursor.up();
+          clicking = false;
+
+          //creating click up event
+          console.log("unclick");
+        }
       }
     }, 33);
 
