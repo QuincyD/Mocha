@@ -61,9 +61,14 @@ function Synth() {
   this.updateFundFreq = function(fundFreq, fromLeap=false) {
     if (this.oscillator)
     {
+      // setTargetAtTime allows us to smoothly transition between frequencies
+      // NOTE: we may be able to leverage this function to greatly reduce leap motion polling time,
+      //       but I couldn't find a way to not mess up phase of harmonics
+      // this.oscillator.frequency.setTargetAtTime(fundFreq, this.audioCtx.currentTime, 0.01);
       this.oscillator.frequency.value = fundFreq;
       for(let i = 0; i < this.numHarm; ++i)
       {
+        // this.harmOscillators[i].frequency.setTargetAtTime(fundFreq * (i + 2), this.audioCtx.currentTime, 0.01);
         this.harmOscillators[i].frequency.value = fundFreq * (i + 2);
       }
 
