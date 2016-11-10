@@ -19,11 +19,20 @@ var LeapCursor = (function() {
         },
 
         down: function() {
+          //called when a click starts
           s.className = "circleBase cursorClick";
         },
 
         up: function() {
+          //called when the click is released
           s.className = "circleBase cursor"
+        },
+
+        pos: function() {
+          //Returns the cursor's offset with respect to the center
+          let left =  s.offsetLeft;
+          let top = s.offsetTop;
+          return [left, top];
         }
     };
 }());
@@ -40,6 +49,7 @@ function LeapMotion() {
   var hand = null;
   var emptyFrame = false;
   var clicking = false;
+  var clickEle = null;
 
   //Setting up a new controller object for the Leap Motion
   var my_controller = new Leap.Controller({
@@ -127,13 +137,58 @@ function LeapMotion() {
           clicking = true;
 
           //creating click down event
-          console.log("click");
+          let cursorPos = LeapCursor.pos();
+          if (! cursorPos) {
+            return;
+          }
+          
+          clickEle = document.elementFromPoint(cursorPos[0], cursorPos[1]);
+
+          var evt = new MouseEvent("mousedown", {
+            view: window,
+            cancelable: true,
+            clientX: cursorPos[0],
+            clientY: cursorPos[1]
+          });
+
+          clickEle.dispatchEvent(evt);
+
+        } else if (zone === "touching" && clicking) {
+          cursorPos = LeapCursor.pos();
+
+          var evt = new MouseEvent("mousemove", {
+            view: window,
+            cancelable: true,
+            clientX: cursorPos[0],
+            clientY: cursorPos[1]
+          });
+
+          clickEle.dispatchEvent(evt);
+
         } else if (zone === "hovering" && clicking) {
           LeapCursor.up();
           clicking = false;
 
           //creating click up event
-          console.log("unclick");
+          let cursorPos = LeapCursor.pos();
+
+          var evtUp = new MouseEvent("mouseup", {
+            view: window,
+            cancelable: true,
+            clientX: cursorPos[0],
+            clientY: cursorPos[1]
+          });
+
+          var evtClick = new MouseEvent("click", {
+            view: window,
+            cancelable: true,
+            clientX: cursorPos[0],
+            clientY: cursorPos[1]
+          });
+
+          clickEle.dispatchEvent(evtUp);
+          clickEle.dispatchEvent(evtClick);
+
         }
       }
     }, 33);
