@@ -188,7 +188,7 @@ function Synth() {
   };
 
   this.playback = function() {
-    this.recorder.playTracks();
+    this.recorder.isPlaybacking() ? this.recorder.stopTracks() : this.recorder.playTracks();
   };
 
   this.getTracks = function() {
