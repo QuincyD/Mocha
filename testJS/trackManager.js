@@ -145,8 +145,6 @@ function TrackManager() {
   // Begin playback on all the tracks in the tracklist that should be played
   // Tracks that are not muted should be played
   this.playAllTracks = function() {
-    // We are now playing audio
-    this.playingAudio = true;
 
     // Mark all tracks as valid since if we're about to begin playback
     // they better be valid by this point
@@ -154,6 +152,9 @@ function TrackManager() {
 
     // Reset the seekbar back to position 0
     this.resetSeekbar();
+
+    // We are now playing audio
+    this.playingAudio = true;
 
     // Normalize volume and begin playback on all tracks
     for (let i in this.trackList) {
@@ -171,9 +172,11 @@ function TrackManager() {
 
   // Pauses the playback on all tracks and resets their seek to 0
   this.stopAllTracks = function() {
+    console.log("stopping2");
     for (let i in this.trackList) {
       this.trackList[i].audioObj.pause();
       this.trackList[i].audioObj.currentTime = 0;
+      console.log(this.trackList[i].audioObj.currentTime);
     }
     // We're done playing audio if we're stopping playback
     this.playingAudio = false;
@@ -206,7 +209,7 @@ function TrackManager() {
 
   // The amount of mouse movement allowed during a mouse click event
   // before a click is determined to be a drag and not a click
-  this.canvas.clickThreshold = 5;
+  this.canvas.click = 5;
 
   // Given an event, returns the mouse x,y relative to the
   // clicked canvas object

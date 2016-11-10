@@ -41,8 +41,17 @@ function Recorder(audioContext) {
     this.trackManager.playAllTracks();
   };
 
+  this.stopTracks = function() {
+    console.log("stopping1");
+    this.trackManager.stopAllTracks();
+  }
+
   this.getTracks = function() {
     return this.trackManager.getTracks();
+  }
+
+  this.isPlaybacking = function() {
+    return this.trackManager.playingAudio;
   }
 
 }

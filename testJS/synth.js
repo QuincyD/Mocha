@@ -7,13 +7,15 @@ function Synth() {
 
   this.minFreq = 150;
   this.maxFreq = 650;
-  this.maxAmp = .75;
+  this.maxAmp = 0.75;
   this.numHarm = 3;
   this.harmOscillators = [];
   this.harmGains = [];
   this.harmSliders = [];
   this.volumeSlider = null;
   this.freqSlider = null;
+  this.distortion = this.audioCtx.createWaveShaper();
+  this.isDistortion = false;
 
 
   // Use function return to create callbacks to avoid creating closures inline
@@ -23,9 +25,27 @@ function Synth() {
     };
   }
 
+  function makeDistortionCurve( amount ) {
+    var k = typeof amount === 'number' ? amount : 50,
+      n_samples = 44100,
+      curve = new Float32Array(n_samples),
+      deg = Math.PI / 180,
+      i = 0,
+      x;
+    for ( ; i < n_samples; ++i ) {
+      x = i * 2 / n_samples - 1;
+      curve[i] = ( 3 + k ) * x * 20 * deg / ( Math.PI + k * Math.abs(x) );
+    }
+    return curve;
+}
+
   this.init = function() {
     _this.waveform = new Waveform(_this.audioCtx);
     this.recorder = new Recorder(this.audioCtx);
+
+    // Initialize distortion curve
+    this.distortion.curve = makeDistortionCurve(400);
+    this.distortion.oversample = '4x';
 
     // Create the harmonic sliders
     let x;
@@ -120,7 +140,10 @@ function Synth() {
     // TODO: Grab values from actual sliders
     // Create gain node that controls master volume
     this.volume = this.audioCtx.createGain();
-    this.volume.connect(this.audioCtx.destination);
+    let endNode = this.isDistortion ? this.distortion : this.volume;
+    if (this.isDistortion)
+      this.volume.connect(this.distortion);
+    endNode.connect(this.audioCtx.destination);
     this.changeVolume(parseFloat(this.volumeSlider.value));
     // this.volume.gain.value = 0.7 * this.maxAmp;
     // Create base oscillator
@@ -142,8 +165,8 @@ function Synth() {
     this.updateFundFreq(parseFloat(this.freqSlider.value));
 
     // Connect the master gain slider to the recorder
-    this.recorder.connectOscillators([this.volume]);
-    this.waveform.connectOscillators([this.volume]);
+    this.recorder.connectOscillators([endNode]);
+    this.waveform.connectOscillators([endNode]);
 
     this.oscillator.start();
     for (let i = 0; i < this.numHarm; ++i)
@@ -160,8 +183,12 @@ function Synth() {
     this.playing = !this.playing;
   };
 
+  this.toggleDistortion = function() {
+    this.isDistortion = !this.isDistortion;
+  };
+
   this.playback = function() {
-    this.recorder.playTracks();
+    this.recorder.isPlaybacking() ? this.recorder.stopTracks() : this.recorder.playTracks();
   };
 
   this.getTracks = function() {
