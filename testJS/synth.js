@@ -133,6 +133,8 @@ function Synth() {
     {
       this.harmOscillators[i].stop();
     }
+    this.distortion.disconnect();
+    this.volume.disconnect();
     return false;
   };
 
