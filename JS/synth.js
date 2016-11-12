@@ -46,14 +46,14 @@ function Synth() {
     this.distortion.oversample = '4x';
 
     // Create the harmonic sliders
-    let x, div;
+    let x, div, perc = 100/this.numHarm;
     let harmonicDiv = document.getElementById("harmonicSliders");
 
     for(let i = 0; i < this.numHarm; ++i)
     {
       // Create container divs for the columns
       div = document.createElement("DIV");
-      div.setAttribute("style", "float: left; width: 33%;");
+      div.setAttribute("style", `float: left; width: ${perc}%;`);
 
       // Create sliders for the harmonics
       x = document.createElement("INPUT");
