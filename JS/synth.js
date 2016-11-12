@@ -12,13 +12,11 @@ function Synth() {
   this.harmOscillators = [];
   this.harmGains = [];
   this.harmSliders = [];
-  this.volumeSlider = null;
-  this.freqSlider = null;
   this.distortion = this.audioCtx.createWaveShaper();
   this.isDistortion = false;
 
 
-  // Use function return to create callbacks to avoid creating closures inline
+  // Use function return to create callbacks and avoid creating closures inline
   function createOnInput(i) {
     return function() {
       synthesizer.changeHarmVol(this.value, i);
@@ -48,34 +46,32 @@ function Synth() {
     this.distortion.oversample = '4x';
 
     // Create the harmonic sliders
-    let x;
+    let x, div;
     let harmonicDiv = document.getElementById("harmonicSliders");
-    this.volumeSlider = document.getElementById("masterVolume");
-    this.freqSlider = document.getElementById("fundamentalFrequency");
-    this.freqSlider.min = this.minFreq;
-    this.freqSlider.max = this.maxFreq;
-    let mid = Math.floor((this.maxFreq + this.minFreq) / 2);
-    this.updateFreqSlider(this.minFreq, this.maxFreq, mid);
+
     for(let i = 0; i < this.numHarm; ++i)
     {
+      // Create container divs for the columns
+      div = document.createElement("DIV");
+      div.setAttribute("style", "float: left; width: 33%;");
+
+      // Create sliders for the harmonics
       x = document.createElement("INPUT");
       x.setAttribute("type", "range");
+      x.setAttribute('orient','vertical');
+      x.setAttribute('class', 'harmonic-slider');
       x.min = "0";
       x.max = ".5";
       x.step = ".01";
       x.value = ".1";
       x.oninput = createOnInput(i);
-      harmonicDiv.appendChild(x);
+
+      // Add to the html
+      div.appendChild(x);
+      harmonicDiv.appendChild(div);
 
       this.harmSliders.push(x);
     }
-  };
-
-  this.updateFreqSlider = function(minVal, maxVal, value)
-  {
-    this.freqSlider.min = minVal;
-    this.freqSlider.max = maxVal;
-    this.freqSlider.value = value;
   };
 
   this.updateFundFreq = function(fundFreq, fromLeap=false) {
@@ -91,24 +87,14 @@ function Synth() {
         // this.harmOscillators[i].frequency.setTargetAtTime(fundFreq * (i + 2), this.audioCtx.currentTime, 0.01);
         this.harmOscillators[i].frequency.value = fundFreq * (i + 2);
       }
-
-      if(fromLeap)
-      {
-        this.freqSlider.value = fundFreq;
-      }
     }
   };
 
   this.changeVolume = function(normalized, fromLeap=false)
   {
-    if (this.volume)
+    if (this.volume && normalized >= 0)
     {
       this.volume.gain.value = normalized * normalized * this.maxAmp;
-
-      if (fromLeap)
-      {
-        this.volumeSlider.value = normalized;
-      }
     }
   };
 
@@ -122,35 +108,32 @@ function Synth() {
     }
   };
 
-  this.changeFreq = function(element) {
-    var fraction = parseInt(element.value) / parseInt(element.max);
-    this.updateFundFreq(this.minFreq + (this.maxFreq - this.minFreq) * fraction);
-  };
-
   this.stop = function() {
+    // Stop the oscillators
     this.oscillator.stop();
     for(let i = 0; i < this.numHarm; ++i)
     {
       this.harmOscillators[i].stop();
     }
+    // Disconnect the end nodes to allow garbage collection
     this.distortion.disconnect();
     this.volume.disconnect();
     return false;
   };
 
   this.start = function() {
-    // TODO: Grab values from actual sliders
-    // Create gain node that controls master volume
+    // Create gain node that controls master volume as well as connect distortion if necessary
     this.volume = this.audioCtx.createGain();
     let endNode = this.isDistortion ? this.distortion : this.volume;
     if (this.isDistortion)
       this.volume.connect(this.distortion);
     endNode.connect(this.audioCtx.destination);
-    this.changeVolume(parseFloat(this.volumeSlider.value));
-    // this.volume.gain.value = 0.7 * this.maxAmp;
+    this.changeVolume(0.0);
+
     // Create base oscillator
     this.oscillator = this.audioCtx.createOscillator();
     this.oscillator.connect(this.volume);
+
     // Create harmonic oscillators with independent gain control
     this.harmOscillators = [];
     this.harmGains = [];
@@ -164,12 +147,14 @@ function Synth() {
       this.harmOscillators[i].connect(this.harmGains[i]);
     }
 
-    this.updateFundFreq(parseFloat(this.freqSlider.value));
+    // Set initial frequency to be 440 as a placeholder
+    this.updateFundFreq(440);
 
     // Connect the master gain slider to the recorder
     this.recorder.connectOscillators([endNode]);
     this.waveform.connectOscillators([endNode]);
 
+    // Start oscillators and visualization
     this.oscillator.start();
     for (let i = 0; i < this.numHarm; ++i)
     {

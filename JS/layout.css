@@ -14,12 +14,23 @@ body {
 	background-color: #fff0cd;
 }
 
+.tuning-div {
+  border: 2px solid blue;
+  border-radius: 25px;
+}
+
+.tune-label {
+  width: auto;
+  text-align: center;
+  display: block;
+}
+
 /* All the same stuff for Firefox */
 input[type=range]::-moz-range-thumb {
   box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
   border: 1px solid #55ffff;
-  height: 10px;
-  width: 12px;
+  height: 30px;
+  width: 60px;
   border-radius: 3px;
   background: #fff0cd;
   cursor: pointer;
