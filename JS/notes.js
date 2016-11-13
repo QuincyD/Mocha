@@ -64,7 +64,8 @@ function getNote(frequency) {
 
 }
 
-function tunerView(frequency) {
+// Produces a slider that shows relative position based on the closest not.
+function tunerView1(frequency) {
 	var canvas = document.getElementById("tunerCanvas");
   	var canvasCtx = canvas.getContext("2d");
 
@@ -78,8 +79,8 @@ function tunerView(frequency) {
 
     canvasCtx.beginPath();
 
-    var lineStartX = 10;
-    var lineEndX = canvas.width - 10;
+    var lineStartX = 20;
+    var lineEndX = canvas.width - 20;
     var lineWidth = lineEndX - lineStartX;
     var lineY = canvas.height / 2;
     var mid = (lineEndX - lineStartX)/2;
@@ -89,6 +90,7 @@ function tunerView(frequency) {
     var markerHeight = 30;
 
 	//draw tuner range lines
+	canvasCtx.strokeStyle = '#fff0cd';
     canvasCtx.moveTo(lineStartX, lineY);
 	canvasCtx.lineTo(lineEndX, lineY);
 
@@ -104,12 +106,11 @@ function tunerView(frequency) {
 
 	//draw range labels
 	noteFreq = getNote(frequency);
-	var font = canvasCtx.font;
-	var fontSize = '20px';
-	canvasCtx.font = fontSize + ' ' + font;
-	canvasCtx.fillText("-1/2", lineStartX - 5, lineY + 25);
-	canvasCtx.fillText(noteFreq[0], mid - 5, lineY + 25);
-	canvasCtx.fillText("1/2", lineEndX - 5, lineY + 25);
+	canvasCtx.font = '30px serif';
+	canvasCtx.fillStyle = '#009999';
+	canvasCtx.fillText("-1/2", lineStartX - 5, lineY + 35);
+	canvasCtx.fillText(noteFreq[0], mid - 15, lineY + 35);
+	canvasCtx.fillText("1/2", lineEndX - 15, lineY + 35);
 
 	//draw note delimiter
 	xPos = (lineWidth * (noteFreq[1] + 0.5)) - markerWidth/2;
@@ -123,5 +124,91 @@ function tunerView(frequency) {
 	
 
 	canvasCtx.stroke();
+
+}
+
+function tunerView2(frequency) {
+	var canvas = document.getElementById("tunerCanvas");
+  	var canvasCtx = canvas.getContext("2d");
+
+
+    var WIDTH = 500;
+    var HEIGHT = 200;
+  	canvas.width = WIDTH;
+  	canvas.height = HEIGHT;
+
+    canvasCtx.lineWidth = 2;
+    canvasCtx.strokeStyle = '#009999';
+
+    canvasCtx.beginPath();
+
+    var midX = WIDTH/2;
+    var midY = HEIGHT/2;
+
+    var noteFreq = getNote(frequency);
+    var note = noteFreq[0];
+    var normFreq = noteFreq[1];
+
+    var minusFreq = true;
+    if (normFreq >= 0) {
+    	minusFreq = false
+    }
+    var amountIndicator = Math.abs(normFreq)*10
+    
+    canvasCtx.moveTo(midX, midY - 20);
+    canvasCtx.lineTo(midX, midY + 20);
+
+    //draw range labels
+	canvasCtx.font = '30px serif';
+	canvasCtx.fillStyle = '#009999';
+	var notePullX = 17;
+	var notePullY = 10;
+	if (note.length > 3) {
+		notePullX *= 3
+	}
+	canvasCtx.fillText(note, midX - notePullX, midY + notePullY);
+	canvasCtx.stroke();
+
+	// draw minuses
+	var minStart = midX - (17*3) - 15;
+	for (i = 0; i < 5; i++){
+		canvasCtx.beginPath();
+		canvasCtx.moveTo(minStart - i*31, midY);
+		canvasCtx.lineTo(minStart - 16 - i*31, midY);
+		if (minusFreq){
+			if(amountIndicator > i) {
+				canvasCtx.strokeStyle = 'rgb(0,255,0)';
+			}
+			else{
+				canvasCtx.strokeStyle = '#009999';
+			}
+			
+		}
+		canvasCtx.stroke();
+	}
+
+	// draw pluses
+	var plusStart = midX + (17*3) + 20;
+	for (i = 0; i < 5; i++){
+		canvasCtx.beginPath();
+		canvasCtx.moveTo(plusStart + i*31 + 8, midY - 7);
+		canvasCtx.lineTo(plusStart + i*31 + 8, midY + 7);
+		canvasCtx.moveTo(plusStart + i*31, midY);
+		canvasCtx.lineTo(plusStart + 16 + i*31, midY);
+		if (!minusFreq){
+			if(amountIndicator > i) {
+				canvasCtx.strokeStyle = 'rgb(0,255,0)';
+			}
+			else{
+				canvasCtx.strokeStyle = '#009999';
+			}
+			
+		}
+		canvasCtx.stroke();
+	}
+
+	canvasCtx.stroke();
+
+ 
 
 }
