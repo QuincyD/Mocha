@@ -173,6 +173,11 @@ function TrackManager() {
 
   } // end addTrack()
 
+  this.deleteTrack = function(trackId) {
+    delete _this.trackList[trackId];
+    _this.invalidateCanvas();
+  }
+
   // Begin playback on all the tracks in the tracklist that should be played
   // Tracks that are not muted should be played
   this.playAllTracks = function() {
@@ -483,7 +488,8 @@ function TrackManager() {
     if (this.mouseXDown >= (canvasWidth - _this.trackButtonWidth)) {
       // Corresponds to the right button of the track being pressed
       // Action: Delete track
-      console.log("delete");    //TODO @Tyler
+      _this.deleteTrack(_this.clickedTrackId['id'])
+      //TODO @Tyler
     } else if (this.mouseXDown >= (canvasWidth - 2 * _this.trackButtonWidth)) {
       // Corresponds to the left button of the track being pressed
       // Action: Mute/Unmute track
