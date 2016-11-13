@@ -72,3 +72,15 @@ fieldset[disabled] ..btn-mocha.active {
 .cursorClick {
   background: green;
 }
+
+/* adapted from:
+http://stackoverflow.com/questions/32976961/how-do-you-add-a-bootstrap-icon-to-an-canvas-using-javascript-if-there-is-a-wa */
+@font-face {
+  font-family: 'glyphicon';
+  src: url('./fonts/glyphicons-halflings-regular.eot'); /* IE9 Compat Modes */
+  src: url('./fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('./fonts/glyphicons-halflings-regular.woff2') format('woff2'), /* Super Modern Browsers */
+       url('./fonts/glyphicons-halflings-regular.woff') format('woff'), /* Pretty Modern Browsers */
+       url('./fonts/glyphicons-halflings-regular.ttf')  format('truetype'), /* Safari, Android, iOS */
+       url('./fonts/glyphicons-halflings-regular.svg#svgFontName') format('svg'); /* Legacy iOS */
+}
