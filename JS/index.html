@@ -60,11 +60,14 @@ body {
                     <br />
                 </div>
             </div>
+            <div id="containerB"></div>
             <div class="row">
                 <div class="col-md-8">
                     <button onClick="synthesizer.toggle()" class="btn btn-mocha">Toggle</button>
                     <button onClick="synthesizer.playback()" class="btn btn-mocha">Playback Recording</button>
                     <button onClick="synthesizer.toggleDistortion()" class="btn btn-mocha">Distortion</button>
+                    <a id="saveProj" class="btn btn-mocha" onClick="synthesizer.exportProject()" class="btn btn-mocha">Save Project</a>
+                    <input type='file' id='file-import'></input>
                 </div>
             </div>
             <div class="row">
@@ -74,6 +77,6 @@ body {
 
             </div>
         </div>
-
+        <a id="projectDownload"></a>
     </body>
 </html>

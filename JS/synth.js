@@ -194,4 +194,8 @@ function Synth() {
   this.getTracks = function() {
     return this.recorder.getTracks();
   };
+
+  this.exportProject = function() {
+    this.recorder.exportProject();
+  }
 }
