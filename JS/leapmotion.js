@@ -191,6 +191,7 @@ function LeapMotion() {
 
         }
       }
+      tunerView2(freq)
     }, 33);
 
   });
