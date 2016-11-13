@@ -8,7 +8,15 @@ var count = 0;
 // Number is only added to the flat, but number is implied.
 for (i = 0; i < 9; i++){
 	for (j = 0; j < 12; j++){
-		notes[count] = baseNotes[j]+i.toString();
+		var curNote = baseNotes[j]
+		if (curNote.length > 1){
+			var sides = curNote.split("/");
+			curNote = sides[0] + i.toString() + "/" + sides[1] + i.toString();
+		}
+		else {
+			curNote = curNote + i.toString();
+		}
+		notes[count] = curNote;
 		count++;
 	}
 }
@@ -51,7 +59,69 @@ function getNote(frequency) {
 		return [notes[lowerIndex], norm1];
 	}
 	if (norm2 < norm1) {
-		return [notes[upperIndex], norm2];
+		return [notes[upperIndex], -norm2];
 	}
+
+}
+
+function tunerView(frequency) {
+	var canvas = document.getElementById("tunerCanvas");
+  	var canvasCtx = canvas.getContext("2d");
+
+    var WIDTH = 500;
+    var HEIGHT = 200;
+  	canvas.width = WIDTH;
+  	canvas.height = HEIGHT;
+
+    canvasCtx.lineWidth = 2;
+    canvasCtx.strokeStyle = 'rgb(0, 0, 0)';
+
+    canvasCtx.beginPath();
+
+    var lineStartX = 10;
+    var lineEndX = canvas.width - 10;
+    var lineWidth = lineEndX - lineStartX;
+    var lineY = canvas.height / 2;
+    var mid = (lineEndX - lineStartX)/2;
+
+    //marker size
+    var markerWidth = 30;
+    var markerHeight = 30;
+
+	//draw tuner range lines
+    canvasCtx.moveTo(lineStartX, lineY);
+	canvasCtx.lineTo(lineEndX, lineY);
+
+	canvasCtx.moveTo(lineStartX, lineY - 10);
+	canvasCtx.lineTo(lineStartX, lineY + 10);
+
+	canvasCtx.moveTo(mid, lineY - 10);
+	canvasCtx.lineTo(mid, lineY + 10);
+
+	canvasCtx.moveTo(lineEndX, lineY - 10);
+	canvasCtx.lineTo(lineEndX, lineY + 10);
+	
+
+	//draw range labels
+	noteFreq = getNote(frequency);
+	var font = canvasCtx.font;
+	var fontSize = '20px';
+	canvasCtx.font = fontSize + ' ' + font;
+	canvasCtx.fillText("-1/2", lineStartX - 5, lineY + 25);
+	canvasCtx.fillText(noteFreq[0], mid - 5, lineY + 25);
+	canvasCtx.fillText("1/2", lineEndX - 5, lineY + 25);
+
+	//draw note delimiter
+	xPos = (lineWidth * (noteFreq[1] + 0.5)) - markerWidth/2;
+	yPos = lineY - markerHeight/2;
+
+	canvasCtx.fillStyle = "#009999";
+	canvasCtx.fillRect(xPos, yPos, markerWidth, markerHeight);
+	
+	canvasCtx.moveTo(xPos + markerWidth/2, yPos - 5);
+	canvasCtx.lineTo(xPos + markerWidth/2, yPos + markerHeight + 5);
+	
+
+	canvasCtx.stroke();
 
 }
