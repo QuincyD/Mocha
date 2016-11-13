@@ -40,9 +40,10 @@ function Synth() {
   this.init = function() {
     _this.waveform = new Waveform(_this.audioCtx);
     this.recorder = new Recorder(this.audioCtx);
+    this.metronome = new Metronome(this.audioCtx);
 
     // Initialize distortion curve
-    this.distortion.curve = makeDistortionCurve(400);
+    this.distortion.curve = makeDistortionCurve(80);
     this.distortion.oversample = '4x';
 
     // Create the harmonic sliders
@@ -165,9 +166,26 @@ function Synth() {
   };
 
   this.toggle = function() {
-    this.playing ? this.recorder.stopRecording() : this.recorder.startRecording();
     this.playing ? this.stop() : this.start();
     this.playing = !this.playing;
+
+    if (this.recording)
+    {
+      $('#toggle-recording').trigger('click');
+    }
+  };
+
+  this.toggleRecording = function() {
+    if (this.playing)
+    {
+      this.recording ? this.recorder.stopRecording() : this.recorder.startRecording();
+      this.recording = !this.recording;
+    }
+  };
+
+  this.toggleMetronome = function() {
+    this.playMetronome ? this.metronome.stop() : this.metronome.start();
+    this.playMetronome = !this.playMetronome;
   };
 
   this.toggleDistortion = function() {
