@@ -1,12 +1,25 @@
+// Web audio based metronome --------------------------
 function Metronome(audioContext)
 {
   this.audioCtx = audioContext;
 
   var timer, noteCount, counting;
+  var woodblock;
   var freq = 330;
   var _this = this;
   var delta = 0;
   var curTime = 0.0;
+
+  // Fetch the wav file for the metronome
+	var getSound = new XMLHttpRequest(); // Load the Sound with XMLHttpRequest
+	getSound.open("GET", "sounds/woodblock.wav", true);
+	getSound.responseType = "arraybuffer"; // Read as Binary Data
+	getSound.onload = function() {
+		_this.audioCtx.decodeAudioData(getSound.response, function(buffer){
+			woodblock = buffer; // Decode the Audio Data and Store it in a Variable
+		});
+	}
+	getSound.send();
 
   /*
   Based off: http://www.html5rocks.com/en/tutorials/audio/scheduling/
@@ -26,16 +39,23 @@ function Metronome(audioContext)
 
   /* Play note on a delayed interval of t */
   this.playNote = function(t) {
-    let note = this.audioCtx.createOscillator();
+    let playSound = this.audioCtx.createBufferSource();
+		playSound.buffer = woodblock;
+		playSound.connect(this.audioCtx.destination);
+		playSound.start(t);
+    playSound.stop(t + 0.5);
 
-    // note.frequency.value = 250;
-    note.connect(this.audioCtx.destination);
-
-    note.frequency.setValueAtTime(freq, t);
-    note.frequency.exponentialRampToValueAtTime(0.01, t + 0.5);
-
-    note.start(t);
-    note.stop(t + 0.05);
+    // Old oscillator based synth
+    // let note = this.audioCtx.createOscillator();
+    //
+    // // note.frequency.value = 250;
+    // note.connect(this.audioCtx.destination);
+    //
+    // note.frequency.setValueAtTime(fre, t);
+    // note.frequency.exponentialRampToValueAtTime(0.01, t + 0.5);
+    //
+    // note.start(t);
+    // note.stop(t + 0.05);
   };
 
   // this.countDown = function() {
