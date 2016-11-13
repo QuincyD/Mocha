@@ -113,7 +113,7 @@ function LeapMotion() {
         normalized = interactionBox.normalizePoint(hand.palmPosition);
 
         //Updating sound
-        freq = 200 + normalized[0] * 440;
+        freq = synthesizer.minFreq + normalized[0] * (synthesizer.maxFreq - synthesizer.minFreq);
         synthesizer.updateFundFreq(freq, true);
         synthesizer.changeVolume(1 - normalized[1], true);
       }
@@ -141,7 +141,7 @@ function LeapMotion() {
           if (! cursorPos) {
             return;
           }
-          
+
           clickEle = document.elementFromPoint(cursorPos[0], cursorPos[1]);
 
           var evt = new MouseEvent("mousedown", {

@@ -100,7 +100,8 @@ function Synth() {
   };
 
   this.detune = function(value) {
-    this.oscillator.detune.value = value;
+    if (this.oscillator)
+      this.oscillator.detune.value = value;
   };
 
   this.changeHarmVol = function(volume, index) {
