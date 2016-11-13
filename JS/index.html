@@ -7,11 +7,13 @@
         <meta name="author" content="The Mocha Team" />
         <script src="https://js.leapmotion.com/leap-0.6.4.js"></script>
         <script src="waveform.js"></script>
+        <script src="metronome.js"></script>
         <script src="synth.js"></script>
         <script src="trackManager.js"></script>
         <script src="recorder.js"></script>
         <script src="leapmotion.js"></script>
         <script src="main.js"></script>
+        <script src="notes.js"></script>
 
     <!-- Bootstrap -->
     <!-- Latest compiled and minified CSS -->
@@ -43,36 +45,34 @@ body {
                     <canvas id="can" width="1000px" height="350px"></canvas>
                 </div>
                 <div class="col-md-4">
-                    <br />
-                    <label>Amplitude: </label>
-                    <input id="masterVolume" type="range"  min="0" max="1" step=".01" value=".75" oninput="synthesizer.changeVolume(this.value)"/>
-                    <br />
-                    <label>Frequency: </label>
-                    <input id="fundamentalFrequency" type="range"  min="0" max="100" value="50" oninput="synthesizer.changeFreq(this)"/>
-                    <br />
-                    <label>Detune: </label>
-                    <input type="range"  min="0" max="100" value="0" oninput="synthesizer.detune(this.value)"/>
+                    <div id="detune-holder" class="tuning-div" style="float: left; width: 25%;">
+                        <label class="tune-label">Detune</label>
+                        <br />
+                        <input type="range"  min="0" max="100" value="0" orient="vertical" oninput="synthesizer.detune(this.value)"/>
+                    </div>
 
-                    <br /><br />
-                    <label>Harmonic Amplitudes: </label>
-                    <br  />
-                    <div id="harmonicSliders"></div>
+                    <div id="harmonicSliders" class="tuning-div" style="float: left; width: 75%;">
+                        <label class="tune-label">Harmonic Amplitudes</label>
+                        <br />
+                    </div>
                     <br />
+                    <button onClick="synthesizer.toggleDistortion()" class="btn btn-mocha"data-toggle="button" data-toggle="button" style="margin-top: 10px;">Distortion</button>
                 </div>
             </div>
-            <div id="containerB"></div>
             <div class="row">
                 <div class="col-md-8">
-                    <button onClick="synthesizer.toggle()" class="btn btn-mocha">Toggle</button>
+                    <button onClick="synthesizer.toggle()" class="btn btn-mocha" data-toggle="button">Toggle Synth</button>
+                    <button id="toggle-recording" onClick="synthesizer.toggleRecording()" class="btn btn-mocha" data-toggle="button">Toggle Recording</button>
                     <button onClick="synthesizer.playback()" class="btn btn-mocha">Playback Recording</button>
-                    <button onClick="synthesizer.toggleDistortion()" class="btn btn-mocha">Distortion</button>
-                    <a id="saveProj" class="btn btn-mocha" onClick="synthesizer.exportProject()" class="btn btn-mocha">Save Project</a>
-                    <input type='file' id='file-import'></input>
+                    <br /> <br />
+                    <label>BPM:</label>
+                    <input type="text" value="60" class="bpm-value" style="color: black"/>
+                    <button onclick="synthesizer.toggleMetronome()" class="btn btn-mocha" data-toggle="button">Toggle Metronome</button>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-12">
-
+                    <canvas id="tunerCanvas"></canvas>
                 </div>
 
             </div>

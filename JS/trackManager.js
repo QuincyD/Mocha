@@ -12,6 +12,12 @@ function TrackManager() {
   var canvasWidth = this.canvas.width;
   var canvasHeight = this.canvas.height;
 
+  // The width of the buttons drawn at the end of each track
+  this.trackButtonWidth = 50;
+
+  // The width of the track display
+  var trackWidth = canvasWidth - (2 * this.trackButtonWidth);
+
   // The next unique id for a track
   // Don't use this directly, use getNextId()
   // We start at 1 for convenience when checking if trackId exists
@@ -35,6 +41,10 @@ function TrackManager() {
   // The refresh rate of the canvas in ms
   // Used for timing of the audio playback
   this.refreshRate = 10;
+
+  // Variable for determine which track is being clickd
+  // Initialized to an invalid state
+  this.clickedTrackId = false;
 
   // Boolean indicating whether or not the current canvas is valid
   // Starts as false so we draw on first draw call
@@ -142,7 +152,7 @@ function TrackManager() {
       track.offsetTime = offsetTime; // How long to wait before playing track
       track.x = x; // x location on canvas
       track.y = (canvasHeight/_this.tracksToShow) * (_this.getNumTracks()); // y location on canvas
-      track.w = (track.duration / _this.secondsToShow) * canvasWidth; // width on canvas
+      track.w = (track.duration / _this.secondsToShow) * trackWidth; // width on canvas
       track.h = canvasHeight/_this.tracksToShow; // height on canvas
       track.opacity = 1; // Opacity of track on canvas
       track.verified = false; // Track isn't verified until playback begins
@@ -324,7 +334,7 @@ function TrackManager() {
 
   // The amount of mouse movement allowed during a mouse click event
   // before a click is determined to be a drag and not a click
-  this.canvas.clickThreshold = 5;
+  this.canvas.clickThreshold = 20;
 
   // Given an event, returns the mouse x,y relative to the
   // clicked canvas object
@@ -335,7 +345,7 @@ function TrackManager() {
     var x = event.clientX - rect.left;
     var y = event.clientY - rect.top;
     return { "x" : x,
-             "y" : y }
+             "y" : y };
   } // end getMousePosition()
 
   // Gets the track id of the clicked track on the canvas
@@ -347,13 +357,21 @@ function TrackManager() {
     var x = pos['x'];
     var y = pos['y'];
 
+    function trackID(track, y) {
+      return y >= track.y && y <= track.y + track.h;
+    };
+
     function inBounds(track, x, y) {
       return x >= track.x && x <= track.x + track.w && y >= track.y && y <= track.y + track.h;
     }; // end inBounds()
 
     for (let i in _this.trackList) {
-      if (inBounds(_this.trackList[i], x, y)) {
-        return _this.trackList[i].id;
+      if (trackID(_this.trackList[i], y)) {
+        id = _this.trackList[i].id;
+        onTrack = inBounds(_this.trackList[i], x, y);
+
+        return { "id" : id,
+                 "onTrack" : onTrack };
       }
     }
     return false;
@@ -368,6 +386,10 @@ function TrackManager() {
     var mousePos = this.getMousePosition(evt);
     this.mouseXDown = mousePos['x'];
     this.mouseYDown = mousePos['y'];
+
+    // Find what track the mouse is currently moving over
+    _this.clickedTrackId = this.getClickedTrack(mousePos);
+    console.log(_this.clickedTrackId);
 
     // An offset of the mouse vs. the dragged track
     // Allows tracks to be grabbed anywhere and still act naturally
@@ -396,12 +418,9 @@ function TrackManager() {
     // Get the current mouse position
     var mousePos = this.getMousePosition(evt);
 
-    // Find what track the mouse is currently moving over
-    var clickedTrackId = this.getClickedTrack(mousePos);
-
     // If we aren't dragging on a track, return early
     // see: this.canvas.onmouseclick()
-    if (!clickedTrackId) {
+    if (!_this.clickedTrackId["onTrack"]) {
       return;
     }
 
@@ -413,7 +432,7 @@ function TrackManager() {
     // If we don't have a dragOffset yet
     if (this.dragOffset === 0) {
       // Grab the track that our mouse is over
-      let track = _this.trackList[clickedTrackId];
+      let track = _this.trackList[_this.clickedTrackId["id"]];
       let x = mousePos['x'];
       // And calculate the dragOffset
       this.dragOffset = getDragOffset(track, x);
@@ -423,10 +442,10 @@ function TrackManager() {
     var newPosition = mousePos['x'] - this.dragOffset;
 
     // Move the track on the canvas
-    _this.trackList[clickedTrackId].x = newPosition;
+    _this.trackList[_this.clickedTrackId["id"]].x = newPosition;
 
     // Update the offsetTime based on its new position
-    _this.trackList[clickedTrackId].offsetTime = (newPosition / canvasWidth * _this.secondsToShow);
+    _this.trackList[_this.clickedTrackId["id"]].offsetTime = (newPosition / trackWidth * _this.secondsToShow);
 
     // We updated something on the canvas, so invalidate it
     _this.invalidateCanvas();
@@ -444,27 +463,48 @@ function TrackManager() {
       return;
     }
 
-    var pos = this.getMousePosition(evt);
-    var clickedTrackId = this.getClickedTrack(pos);
-
     // If a track wasn't clicked, we can just stop this function
     // since there is nothing to do
-    if (!clickedTrackId) {
+    if (!_this.clickedTrackId) {
       return;
     }
 
-    // Mute the track if it isn't muted
-    if (_this.trackList[clickedTrackId].muted === false) {
-      _this.trackList[clickedTrackId].opacity = 0.2;
-      _this.trackList[clickedTrackId].muted = true;
-    }
-    // Otherwise, unmute it
-    else {
-      _this.trackList[clickedTrackId].opacity = 1.0;
-      _this.trackList[clickedTrackId].muted = false;
+    // If clicked on a track return early, we can stop since
+    // a button was not clicked
+    if (_this.clickedTrackId["onTrack"]) {
+      return;
     }
 
+    // Determine if the track or buttons were clicked
+    if (this.mouseXDown < trackWidth || this.mouseXDown > canvasWidth) {
+      return;
+    }
+
+    if (this.mouseXDown >= (canvasWidth - _this.trackButtonWidth)) {
+      // Corresponds to the right button of the track being pressed
+      // Action: Delete track
+      console.log("delete");    //TODO @Tyler
+    } else if (this.mouseXDown >= (canvasWidth - 2 * _this.trackButtonWidth)) {
+      // Corresponds to the left button of the track being pressed
+      // Action: Mute/Unmute track
+
+      // Mute the track if it isn't muted
+      if (_this.trackList[_this.clickedTrackId["id"]].muted === false) {
+        _this.trackList[_this.clickedTrackId["id"]].opacity = 0.2;
+        _this.trackList[_this.clickedTrackId["id"]].muted = true;
+      }
+      // Otherwise, unmute it
+      else {
+        _this.trackList[_this.clickedTrackId["id"]].opacity = 1.0;
+        _this.trackList[_this.clickedTrackId["id"]].muted = false;
+      }
+    }
+
+    // Causing the canvas to redraw
     _this.invalidateCanvas();
+
+    // Resetting this variable for future clicks
+    _this.clickedTrackId = false;
   } // end canvas.onclick()
 
   this.clearCanvas = function() {
@@ -479,10 +519,29 @@ function TrackManager() {
     for (var i = 0; i < _this.tracksToShow; i++) {
       this.ctx.moveTo(0, divHeight * i);
       this.ctx.lineTo(canvasWidth, divHeight * i);
-      this.ctx.fillStyle = 'yellow';
+      this.ctx.strokeStyle = 'black';
       this.ctx.stroke();
     }
   } // end drawTrackLines()
+
+  // Draw function to draw the lines separating tracks from the
+  // mute and delete buttons
+  this.drawButtonLines = function() {
+    let rightLineX = canvasWidth - _this.trackButtonWidth;
+    let leftLineX = canvasWidth - 2 * _this.trackButtonWidth;
+
+    // Drawing the verticle line closest to the right edge
+    this.ctx.moveTo(rightLineX, 0);
+    this.ctx.lineTo(rightLineX, canvasHeight);
+    this.ctx.strokeStyle = 'black';
+    this.ctx.stroke();
+
+    // Drawing the second verticle line
+    this.ctx.moveTo(leftLineX, 0);
+    this.ctx.lineTo(leftLineX, canvasHeight);
+    this.ctx.strokeStyle = 'black';
+    this.ctx.stroke();
+  }
 
   // Draw function to draw the seeking bar
   this.drawSeekingBar = function() {
@@ -505,7 +564,6 @@ function TrackManager() {
     }
 
     // Draw this track at the bottom of the track list
-    var relativeWidth = (thisTrack.duration / _this.secondsToShow) * canvasWidth;
     this.ctx.beginPath();
     this.ctx.globalAlpha = thisTrack.opacity;
     this.ctx.rect(thisTrack.x, thisTrack.y, thisTrack.w, thisTrack.h);
@@ -517,6 +575,25 @@ function TrackManager() {
 
     //Set the global opacity back to 1 for everything else
     this.ctx.globalAlpha = 1;
+
+    //Draw mute and delete buttons
+    var leftButtonX = canvasWidth - (_this.trackButtonWidth / 2);
+    var rightButtonX = canvasWidth - (1.5 * _this.trackButtonWidth);
+    var buttonY = canvasHeight / (2 * _this.tracksToShow);
+
+    this.ctx.textAlign = 'center';
+    this.ctx.textBaseline = 'middle';
+
+    this.ctx.font = "30px glyphicon";
+    this.ctx.fillStyle = 'red';
+    this.ctx.fillText(String.fromCharCode(0xe020), leftButtonX, buttonY);
+
+    this.ctx.fillStyle = 'black';
+    if (thisTrack.muted) {
+      this.ctx.fillText(String.fromCharCode(0xe038), rightButtonX, buttonY);
+    } else {
+      this.ctx.fillText(String.fromCharCode(0xe036), rightButtonX, buttonY);
+    }
   } // end drawTrack()
 
   // Function to mark the Canvas for redrawing
@@ -531,6 +608,7 @@ function TrackManager() {
     if (!_this.canvasValid || _this.playingAudio) {
       _this.clearCanvas();
       _this.drawTrackLines();
+      _this.drawButtonLines();
       _this.updateAudioStatus();
       for (let i in _this.trackList) {
         _this.drawTrack(i);

@@ -14,12 +14,23 @@ body {
 	background-color: #fff0cd;
 }
 
+.tuning-div {
+  border: 2px solid blue;
+  border-radius: 25px;
+}
+
+.tune-label {
+  width: auto;
+  text-align: center;
+  display: block;
+}
+
 /* All the same stuff for Firefox */
 input[type=range]::-moz-range-thumb {
   box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
   border: 1px solid #55ffff;
-  height: 10px;
-  width: 12px;
+  height: 30px;
+  width: 60px;
   border-radius: 3px;
   background: #fff0cd;
   cursor: pointer;
@@ -71,4 +82,16 @@ fieldset[disabled] ..btn-mocha.active {
 
 .cursorClick {
   background: green;
+}
+
+/* adapted from:
+http://stackoverflow.com/questions/32976961/how-do-you-add-a-bootstrap-icon-to-an-canvas-using-javascript-if-there-is-a-wa */
+@font-face {
+  font-family: 'glyphicon';
+  src: url('./fonts/glyphicons-halflings-regular.eot'); /* IE9 Compat Modes */
+  src: url('./fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('./fonts/glyphicons-halflings-regular.woff2') format('woff2'), /* Super Modern Browsers */
+       url('./fonts/glyphicons-halflings-regular.woff') format('woff'), /* Pretty Modern Browsers */
+       url('./fonts/glyphicons-halflings-regular.ttf')  format('truetype'), /* Safari, Android, iOS */
+       url('./fonts/glyphicons-halflings-regular.svg#svgFontName') format('svg'); /* Legacy iOS */
 }
