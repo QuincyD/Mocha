@@ -12,6 +12,7 @@ function Metronome(audioContext)
 
   // Fetch the wav file for the metronome
 	var getSound = new XMLHttpRequest(); // Load the Sound with XMLHttpRequest
+  // Woodblock file from: https://www.freesound.org/people/kwahmah_02/sounds/268822/
 	getSound.open("GET", "sounds/woodblock.wav", true);
 	getSound.responseType = "arraybuffer"; // Read as Binary Data
 	getSound.onload = function() {
