@@ -63,12 +63,16 @@ body {
             <div class="row">
                 <div class="col-md-8">
                     <button onClick="synthesizer.toggle()" class="btn btn-mocha" data-toggle="button">Toggle Synth</button>
-                    <button id="toggle-recording" onClick="synthesizer.toggleRecording()" class="btn btn-mocha" data-toggle="button">Toggle Recording</button>
+                    <button id="toggle-recording" onClick="synthesizer.toggleRecordingCallback()" class="btn btn-mocha">Toggle Recording</button>
                     <button onClick="synthesizer.playback()" class="btn btn-mocha">Playback Recording</button>
                     <br /> <br />
-                    <label>BPM:</label>
-                    <input type="text" value="60" class="bpm-value" style="color: black"/>
+                    <label>BPM:  </label>
+                    <input type="number" value="60" min="20" max="300" id="bpm-value" style="color: black"/>
                     <button onclick="synthesizer.toggleMetronome()" class="btn btn-mocha" data-toggle="button">Toggle Metronome</button>
+                    <br />
+                    <label>Timer: </label>
+                    <input type="number" value="10" id="timer-value" min="0" max="20" style="color: black"/>
+                    <input type="checkbox" id="timer-on" /> On?
                 </div>
             </div>
             <div class="row">

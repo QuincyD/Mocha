@@ -34,7 +34,7 @@ function Metronome(audioContext)
   };
 
   this.updateTime = function() {
-    curTime += 60.0 / parseInt($(".bpm-value").val(), 10);
+    curTime += 60.0 / parseInt($("#bpm-value").val(), 10);
     // noteCount++;
   };
 

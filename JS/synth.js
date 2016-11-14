@@ -166,6 +166,21 @@ function Synth() {
     return true;
   };
 
+  this.timer = function(timeRemaining)
+  {
+    if (timeRemaining <= 0)
+    {
+      $("#timer-value").val(0);
+      $('#toggle-recording').prop('disabled', false);
+      _this.timerTimeout = null;
+      _this.toggleRecording();
+    }
+    else {
+      $("#timer-value").val(timeRemaining - 1);
+      _this.timerTimeout = window.setTimeout(_this.timer, 1000, timeRemaining - 1);
+    }
+  }
+
   this.toggle = function() {
     this.playing ? this.stop() : this.start();
     this.playing = !this.playing;
@@ -176,13 +191,25 @@ function Synth() {
     }
   };
 
-  this.toggleRecording = function() {
+  this.toggleRecordingCallback = function() {
     if (this.playing)
     {
-      this.recording ? this.recorder.stopRecording() : this.recorder.startRecording();
-      this.recording = !this.recording;
+      if (!this.recording && document.getElementById("timer-on").checked)
+      {
+        $('#toggle-recording').prop('disabled', true);
+        this.timer(parseInt($("#timer-value").val(), 10));
+      }
+      else {
+        this.toggleRecording();
+      }
     }
   };
+
+  // Need to separate this code out to be able to asynchronously call from timer
+  this.toggleRecording = function() {
+    this.recording ? this.recorder.stopRecording() : this.recorder.startRecording();
+    this.recording = !this.recording;
+  }
 
   this.toggleMetronome = function() {
     this.playMetronome ? this.metronome.stop() : this.metronome.start();
