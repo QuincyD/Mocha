@@ -45,6 +45,13 @@ function Synth() {
     this.distortion.curve = makeDistortionCurve(400);
     this.distortion.oversample = '4x';
 
+    // Setting properties on the detune slider
+    detuneSlider = document.getElementById("detune-slider");
+    detuneSlider.onmousedown = sliderMouseDown;
+    detuneSlider.onmouseup = sliderMouseUp;
+    detuneSlider.onmousemove = sliderMouseMove;
+    detuneSlider.onclick = sliderMouseClick;
+
     // Create the harmonic sliders
     let x, div;
     let harmonicDiv = document.getElementById("harmonicSliders");
@@ -65,6 +72,10 @@ function Synth() {
       x.step = ".01";
       x.value = ".1";
       x.oninput = createOnInput(i);
+      x.onmousedown = sliderMouseDown;
+      x.onmouseup = sliderMouseUp;
+      x.onmousemove = sliderMouseMove;
+      x.onclick = sliderMouseClick;
 
       // Add to the html
       div.appendChild(x);

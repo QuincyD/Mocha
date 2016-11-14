@@ -12,6 +12,7 @@
         <script src="recorder.js"></script>
         <script src="leapmotion.js"></script>
         <script src="main.js"></script>
+        <script src="sliders.js"></script>
 
     <!-- Bootstrap -->
     <!-- Latest compiled and minified CSS -->
@@ -46,7 +47,7 @@ body {
                     <div id="detune-holder" class="tuning-div" style="float: left; width: 25%;">
                         <label class="tune-label">Detune</label>
                         <br />
-                        <input type="range"  min="0" max="100" value="0" orient="vertical" oninput="synthesizer.detune(this.value)"/>
+                        <input id="detune-slider" type="range"  min="0" max="100" value="0" orient="vertical" oninput="synthesizer.detune(this.value)"/>
                     </div>
 
                     <div id="harmonicSliders" class="tuning-div" style="float: left; width: 75%;">
