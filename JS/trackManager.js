@@ -40,7 +40,7 @@ function TrackManager() {
 
   // The refresh rate of the canvas in ms
   // Used for timing of the audio playback
-  this.refreshRate = 10;
+  this.refreshRate = 5;
 
   // Variable for determine which track is being clickd
   // Initialized to an invalid state
@@ -67,6 +67,22 @@ function TrackManager() {
     }
     this.tracksValid = true;
   } // end validateTracks()
+
+  this.resizeTrackCanvas = function(newSizeInSeconds) {
+    this.secondsToShow = newSizeInSeconds;
+    this.recalculateTrackWidths();
+    this.invalidateCanvas();
+  }
+
+  this.recalculateTrackWidths = function() {
+    for (var i in this.trackList) {
+      var trackDuration = this.trackList[i].duration;
+      var secondsShowing = this.secondsToShow;
+      var trackOffset = this.trackList[i].offsetTime;
+      this.trackList[i].w = (trackDuration / secondsShowing) * trackWidth;
+      this.trackList[i].x = (trackOffset / secondsShowing) * trackWidth;
+    }
+  }
 
   // Returns the number of tracks in the trackList
   // O(n) for getting length, but O(1) on lookup is worth it
@@ -143,11 +159,18 @@ function TrackManager() {
     // Once we've loaded the metadata for this audio object
     // go ahead and build the new track object and put it in trackList
     audioObj.onloadedmetadata = function() {
+
+      // Check if we need to resize all of the tracks to accommodate this big fucking thing
+      var duration = audioObj.duration;
+      if (duration > _this.secondsToShow) {
+        _this.resizeTrackCanvas((Math.floor(duration/15) + 1) * 15);
+      }
+
       var track = {};
 
       track.id = trackId; // Unique identifier (key in trackList)
       track.audioObj = audioObj; // Link the Audio object we just made
-      track.duration = audioObj.duration; // Duration of audio (from metadata)
+      track.duration = duration; // Duration of audio (from metadata)
       track.muted = false; // Is this track muted?
       track.offsetTime = offsetTime; // How long to wait before playing track
       track.x = x; // x location on canvas
@@ -208,11 +231,9 @@ function TrackManager() {
 
   // Pauses the playback on all tracks and resets their seek to 0
   this.stopAllTracks = function() {
-    console.log("stopping2");
     for (let i in this.trackList) {
       this.trackList[i].audioObj.pause();
       this.trackList[i].audioObj.currentTime = 0;
-      console.log(this.trackList[i].audioObj.currentTime);
     }
     // We're done playing audio if we're stopping playback
     this.playingAudio = false;
@@ -244,15 +265,18 @@ function TrackManager() {
   // Function to compile all of the track information to a downloadable json file
   this.exportProject = function() {
 
+    // Add some useful information to the json object and have the client download it
     function exportJson() {
       project['nextId'] = _this.nextId;
       project['secondsToShow'] = _this.secondsToShow;
       project['tracksToShow'] = _this.tracksToShow;
       var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(project));
+
+      // Update the hidden link element and click it
       $("#projectDownload").attr('href', 'data:' + data);
       $("#projectDownload").attr('download', 'mochaProject.json');
       document.getElementById('projectDownload').click();
-    }
+    } // end exportJson()
 
     // Function for converting blob to base64
     function blobToBase64(blob, callback, trackId) {
@@ -263,13 +287,13 @@ function TrackManager() {
         callback(base64, trackId);
       }
       reader.readAsDataURL(blob);
-    }
+    } // end blobToBase64
 
     // Attach the base64 string to a track
     function saveBase64ToTrack(base64, trackId) {
       _this.trackList[trackId].blob = base64;
       project['tracks'].push(_this.trackList[trackId]);
-    }
+    } // end saveBase64ToTrack()
 
     // Save all of the track objects
     var project = {};
@@ -292,19 +316,28 @@ function TrackManager() {
       xhr.trackId = i;
     }
 
+    // Wait a second before exporting the json
+    // This let's the blob data be fetched
+    // Don't worry this will probably never fail :|
     setTimeout(exportJson, 1000);
 
-  }
+  } //end exportProject()
 
+  // Function for importing a json file created by exportProject()
+  // Loads all of the project parameters and the track objects from the file
   this.importProject = function(file) {
 
+    // Begin loading the project
     function loadProject(project) {
+      // Bookkeeping stuff about the project
       _this.nextId = project.nextId;
       _this.secondsToShow = project.secondsToShow;
       _this.tracksToShow = project.tracksToShow;
       _this.trackList = {};
 
+      // Go through every track that was saved in the json
       for (let i = 0; i < project.tracks.length; i++) {
+        // Convert the base64 string to a binary blob
         var base64str = project.tracks[i].blob;
         var binary = atob(base64str.replace(/\s/g, ''));
         var len = binary.length;
@@ -314,26 +347,34 @@ function TrackManager() {
          view[j] = binary.charCodeAt(j);
         }
         var blob = new Blob( [view], { type: 'audio.ogg; codecs=opus' });
+
+        // Get a blob URL for the fresh blob
         var audioBlobUrl = URL.createObjectURL(blob);
+
+        // Add the track associated with this blob including some additional information
+        // about its placement from the saved json
         _this.addTrack(audioBlobUrl,
                        project.tracks[i].id,
                        project.tracks[i].offsetTime,
                        project.tracks[i].x);
       }
-    }
+    } // end loadProject()
 
+    // Read the json file as parsed text
     var reader = new FileReader();
     reader.onload = function(event) {
       var projectData = event.target.result;
       var project = JSON.parse(projectData);
       loadProject(project);
-    }
+    } // end reader.onload()
     reader.readAsText(file);
-  }
+  } // end importProject()
 
+  // Wait for the file upload element to change
   $("#file-import").change(function() {
+    // Then assume we want to import the new file
     _this.importProject(this.files[0]);
-  });
+  }); // end "file-import".change()
 
   ///// UI Stuff for the track canvas /////
 
@@ -445,6 +486,21 @@ function TrackManager() {
     // Calculate the new position of the track
     var newPosition = mousePos['x'] - this.dragOffset;
 
+    // Check that we aren't out of bounds to the left
+    if (newPosition < 0) {
+      newPosition = 0;
+    }
+
+    var trackW = _this.trackList[_this.clickedTrackId["id"]].w;
+    var newXRight = newPosition + trackW;
+
+    if (newXRight > trackWidth) {
+      newPosition = trackWidth - trackW;
+    }
+
+    // Check that we aren't out of bounds to the right
+    if (newPosition )
+
     // Move the track on the canvas
     _this.trackList[_this.clickedTrackId["id"]].x = newPosition;
 
@@ -487,7 +543,6 @@ function TrackManager() {
       // Corresponds to the right button of the track being pressed
       // Action: Delete track
       _this.deleteTrack(_this.clickedTrackId['id'])
-      //TODO @Tyler
     } else if (this.mouseXDown >= (canvasWidth - 2 * _this.trackButtonWidth)) {
       // Corresponds to the left button of the track being pressed
       // Action: Mute/Unmute track
