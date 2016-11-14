@@ -54,4 +54,8 @@ function Recorder(audioContext) {
     return this.trackManager.playingAudio;
   }
 
+  this.exportProject = function() {
+    this.trackManager.exportProject();
+  }
+
 }

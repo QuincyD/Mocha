@@ -40,9 +40,10 @@ function Synth() {
   this.init = function() {
     _this.waveform = new Waveform(_this.audioCtx);
     this.recorder = new Recorder(this.audioCtx);
+    this.metronome = new Metronome(this.audioCtx);
 
     // Initialize distortion curve
-    this.distortion.curve = makeDistortionCurve(400);
+    this.distortion.curve = makeDistortionCurve(80);
     this.distortion.oversample = '4x';
 
     // Setting properties on the detune slider
@@ -53,14 +54,14 @@ function Synth() {
     detuneSlider.onclick = sliderMouseClick;
 
     // Create the harmonic sliders
-    let x, div;
+    let x, div, perc = 100/this.numHarm;
     let harmonicDiv = document.getElementById("harmonicSliders");
 
     for(let i = 0; i < this.numHarm; ++i)
     {
       // Create container divs for the columns
       div = document.createElement("DIV");
-      div.setAttribute("style", "float: left; width: 33%;");
+      div.setAttribute("style", `float: left; width: ${perc}%;`);
 
       // Create sliders for the harmonics
       x = document.createElement("INPUT");
@@ -110,7 +111,8 @@ function Synth() {
   };
 
   this.detune = function(value) {
-    this.oscillator.detune.value = value;
+    if (this.oscillator)
+      this.oscillator.detune.value = value;
   };
 
   this.changeHarmVol = function(volume, index) {
@@ -176,9 +178,26 @@ function Synth() {
   };
 
   this.toggle = function() {
-    this.playing ? this.recorder.stopRecording() : this.recorder.startRecording();
     this.playing ? this.stop() : this.start();
     this.playing = !this.playing;
+
+    if (this.recording)
+    {
+      $('#toggle-recording').trigger('click');
+    }
+  };
+
+  this.toggleRecording = function() {
+    if (this.playing)
+    {
+      this.recording ? this.recorder.stopRecording() : this.recorder.startRecording();
+      this.recording = !this.recording;
+    }
+  };
+
+  this.toggleMetronome = function() {
+    this.playMetronome ? this.metronome.stop() : this.metronome.start();
+    this.playMetronome = !this.playMetronome;
   };
 
   this.toggleDistortion = function() {
@@ -192,4 +211,8 @@ function Synth() {
   this.getTracks = function() {
     return this.recorder.getTracks();
   };
+
+  this.exportProject = function() {
+    this.recorder.exportProject();
+  }
 }

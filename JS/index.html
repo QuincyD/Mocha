@@ -7,12 +7,14 @@
         <meta name="author" content="The Mocha Team" />
         <script src="https://js.leapmotion.com/leap-0.6.4.js"></script>
         <script src="waveform.js"></script>
+        <script src="metronome.js"></script>
         <script src="synth.js"></script>
         <script src="trackManager.js"></script>
         <script src="recorder.js"></script>
         <script src="leapmotion.js"></script>
         <script src="main.js"></script>
         <script src="sliders.js"></script>
+        <script src="notes.js"></script>
 
     <!-- Bootstrap -->
     <!-- Latest compiled and minified CSS -->
@@ -55,23 +57,29 @@ body {
                         <br />
                     </div>
                     <br />
+                    <button onClick="synthesizer.toggleDistortion()" class="btn btn-mocha"data-toggle="button" data-toggle="button" style="margin-top: 10px;">Distortion</button>
                 </div>
             </div>
-
             <div class="row">
                 <div class="col-md-8">
                     <button onClick="synthesizer.toggle()" class="btn btn-mocha" data-toggle="button">Toggle Synth</button>
+                    <button id="toggle-recording" onClick="synthesizer.toggleRecording()" class="btn btn-mocha" data-toggle="button">Toggle Recording</button>
                     <button onClick="synthesizer.playback()" class="btn btn-mocha">Playback Recording</button>
-                    <button onClick="synthesizer.toggleDistortion()" class="btn btn-mocha"data-toggle="button" data-toggle="button">Distortion</button>
+                    <br /> <br />
+                    <label>BPM:</label>
+                    <input type="text" value="60" class="bpm-value" style="color: black"/>
+                    <button onclick="synthesizer.toggleMetronome()" class="btn btn-mocha" data-toggle="button">Toggle Metronome</button>
+                    <button onclick="synthesizer.exportProject()" class="btn btn-mocha">Save Project</button>
+                    <input type="file" id="file-import"></input>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-12">
-
+                    <canvas id="tunerCanvas"></canvas>
                 </div>
 
             </div>
         </div>
-
+        <a id="projectDownload"></a>
     </body>
 </html>
