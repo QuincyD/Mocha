@@ -435,7 +435,6 @@ function TrackManager() {
 
     // Find what track the mouse is currently moving over
     _this.clickedTrackId = this.getClickedTrack(mousePos);
-    console.log(_this.clickedTrackId);
 
     // An offset of the mouse vs. the dragged track
     // Allows tracks to be grabbed anywhere and still act naturally
@@ -515,7 +514,6 @@ function TrackManager() {
   // On click, check if we are on a track
   // Mute the track if we are
   this.canvas.onclick = function(evt) {
-
     // Check if this was actually a click and not a drag
     var xMove = Math.abs(this.mouseXDown - this.mouseXUp);
     var yMove = Math.abs(this.mouseYDown - this.mouseYUp);

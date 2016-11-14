@@ -145,6 +145,7 @@ function LeapMotion() {
           clickEle = document.elementFromPoint(cursorPos[0], cursorPos[1]);
 
           var evt = new MouseEvent("mousedown", {
+            buttons: 0,
             view: window,
             cancelable: true,
             clientX: cursorPos[0],
@@ -157,6 +158,7 @@ function LeapMotion() {
           cursorPos = LeapCursor.pos();
 
           var evt = new MouseEvent("mousemove", {
+            buttons: 0,
             view: window,
             cancelable: true,
             clientX: cursorPos[0],
@@ -173,6 +175,7 @@ function LeapMotion() {
           let cursorPos = LeapCursor.pos();
 
           var evtUp = new MouseEvent("mouseup", {
+            buttons: 0,
             view: window,
             cancelable: true,
             clientX: cursorPos[0],
@@ -180,6 +183,7 @@ function LeapMotion() {
           });
 
           var evtClick = new MouseEvent("click", {
+            buttons: 0,
             view: window,
             cancelable: true,
             clientX: cursorPos[0],
