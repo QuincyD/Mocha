@@ -13,6 +13,7 @@
         <script src="recorder.js"></script>
         <script src="leapmotion.js"></script>
         <script src="main.js"></script>
+        <script src="sliders.js"></script>
         <script src="notes.js"></script>
 
     <!-- Bootstrap -->
@@ -48,7 +49,7 @@ body {
                     <div id="detune-holder" class="tuning-div" style="float: left; width: 25%;">
                         <label class="tune-label">Detune</label>
                         <br />
-                        <input type="range"  min="0" max="100" value="0" orient="vertical" oninput="synthesizer.detune(this.value)"/>
+                        <input id="detune-slider" type="range"  min="0" max="100" value="0" orient="vertical" oninput="synthesizer.detune(this.value)"/>
                     </div>
 
                     <div id="harmonicSliders" class="tuning-div" style="float: left; width: 75%;">
@@ -59,7 +60,6 @@ body {
                     <button onClick="synthesizer.toggleDistortion()" class="btn btn-mocha"data-toggle="button" data-toggle="button" style="margin-top: 10px;">Distortion</button>
                 </div>
             </div>
-
             <div class="row">
                 <div class="col-md-8">
                     <button onClick="synthesizer.toggle()" class="btn btn-mocha" data-toggle="button">Toggle Synth</button>
@@ -68,11 +68,14 @@ body {
                     <br /> <br />
                     <label>BPM:  </label>
                     <input type="number" value="60" min="20" max="300" id="bpm-value" style="color: black"/>
-                    <button onclick="synthesizer.toggleMetronome()" class="btn btn-mocha" data-toggle="button">Toggle Metronome</button>
                     <br />
                     <label>Timer: </label>
                     <input type="number" value="10" id="timer-value" min="0" max="20" style="color: black"/>
                     <input type="checkbox" id="timer-on" /> On?
+                    <br  />
+                    <button onclick="synthesizer.toggleMetronome()" class="btn btn-mocha" data-toggle="button">Toggle Metronome</button>
+                    <button onclick="synthesizer.exportProject()" class="btn btn-mocha">Save Project</button>
+                    <input type="file" id="file-import"></input>
                 </div>
             </div>
             <div class="row">
@@ -82,6 +85,6 @@ body {
 
             </div>
         </div>
-
+        <a id="projectDownload"></a>
     </body>
 </html>
