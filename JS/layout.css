@@ -1,13 +1,24 @@
+#mega {
+  width: 98%;
+}
+
+h1 {
+  border-left: thick double #282c34;
+  border-left-width: 20px;
+}
+
 body {
-	color: #55ffff;
-	background-color: #280f00;
+  font: 24px sans-serif;
+  border-left: thick double #282c34;
+  border-left-width: 10px;
+  color: #00cccc;
+  background-color: #282c34;
 }
 
 #can {
-	color: #280f00;
-	background-color: #fff0cd;
-	border-radius: 50px;
-	width: 100%;
+  color: #280f00;
+  background-color: #fff0cd;
+  border-radius: 10px;
 }
 
 .track-canvas {
@@ -40,6 +51,7 @@ input[type=range]::-moz-range-thumb {
   color: #280f00;
   background-color: #fff0cd;
   border-color: #55ffff;
+  font-size: 24px;
 }
 .btn-mocha:hover {
   color: #280f00;

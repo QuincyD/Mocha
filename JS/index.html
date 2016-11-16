@@ -37,45 +37,114 @@ body {
 }
 </style>-->
     </head>
+    <!-- New Body -->
     <body>
-      <canvas id="trackCanvas" class="track-canvas" width="1000px" height="350px"></canvas>
-        <div class="containter">
+        <div id="mega" class="containter">
             <div class="row">
                 <div class="col-md-8">
-                    <canvas id="can" width="1000px" height="350px"></canvas>
-                </div>
-                <div class="col-md-4">
-                    <div id="detune-holder" class="tuning-div" style="float: left; width: 25%;">
-                        <label class="tune-label">Detune</label>
-                        <br />
-                        <input type="range"  min="0" max="100" value="0" orient="vertical" oninput="synthesizer.detune(this.value)"/>
-                    </div>
-
-                    <div id="harmonicSliders" class="tuning-div" style="float: left; width: 75%;">
-                        <label class="tune-label">Harmonic Amplitudes</label>
-                        <br />
-                    </div>
                     <br />
-                    <button onClick="synthesizer.toggleDistortion()" class="btn btn-mocha"data-toggle="button" data-toggle="button" style="margin-top: 10px;">Distortion</button>
+                    <h1>M<small>OCHA</small>: M<small>OTION</small> C<small>OMPOSER</small></h1>
                 </div>
             </div>
 
             <div class="row">
+            <br />
                 <div class="col-md-8">
-                    <button onClick="synthesizer.toggle()" class="btn btn-mocha" data-toggle="button">Toggle Synth</button>
-                    <button id="toggle-recording" onClick="synthesizer.toggleRecording()" class="btn btn-mocha" data-toggle="button">Toggle Recording</button>
-                    <button onClick="synthesizer.playback()" class="btn btn-mocha">Playback Recording</button>
-                    <br /> <br />
-                    <label>BPM:</label>
-                    <input type="text" value="60" class="bpm-value" style="color: black"/>
-                    <button onclick="synthesizer.toggleMetronome()" class="btn btn-mocha" data-toggle="button">Toggle Metronome</button>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <canvas id="tunerCanvas"></canvas>
-                </div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <canvas id="trackCanvas" class="track-canvas" width="1000px" height="300px"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <br />
+                        <div class='col-md-2 col-md-push-1'>
+                            <button onClick="synthesizer.toggle()" class="btn btn-mocha" data-toggle="button">Toggle Synth</button>
+                        </div>
 
+                        <div class="col-md-2 col-md-push-2">
+                            <button id="toggle-recording" onClick="synthesizer.toggleRecording()" class="btn btn-mocha" data-toggle="button">Toggle Recording</button>
+                        </div>
+
+                        <div class="col-md-2 col-md-push-3">
+                            <button onClick="synthesizer.playback()" class="btn btn-mocha">Playback Recording</button>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <br />
+                        <div class="col-md-8">
+                            <canvas id="can" width="1000px" height="100px"></canvas>
+                        </div>
+                    </div>
+
+                    <br />
+
+                    <div class="row">
+                        <div class='col-md-8 col-md-push-2'>
+                            <label>BPM:</label>
+                            <input type="text" value="60" class="bpm-value" style="color: black"></input>
+                            <button onclick="synthesizer.toggleMetronome()" class="btn btn-mocha" data-toggle="button">Toggle Metronome</button>
+                        </div>
+                    </div>
+
+                    <div class='row'>
+                        <br />
+                        <div class='col-md-5 col-md-push-2'>
+                            <canvas id="tunerCanvas"></canvas>
+                        </div>
+                    </div>
+
+                    <script type="text/javaScript">
+                        width = screen.width - 25;
+                        height = screen.height - 200;
+
+                        trackWidth = width * (2/3);
+                        trackHeight = (height/2) * (3/4)
+
+                        canWidth = trackWidth;
+                        canHeight = (height/2) * (1/4)
+                        
+                        track = document.getElementById("trackCanvas");
+                        track.width = trackWidth;
+                        track.height = trackHeight;
+
+                        wave = document.getElementById("can");
+                        wave.width = canWidth;
+                        wave.height = canHeight;
+                    </script>
+                    
+                </div>
+                <div class="col-md-3">
+                    <div class="row">
+                        <div class="col-md-1" style="margin-left: 15px">
+                            <button onClick="" class="btn btn-mocha" data-toggle="button">Load</button>
+                        </div>
+
+                        <div class="col-md-1 col-md-push-2" style="margin-left: 15px">
+                            <button onClick="" class="btn btn-mocha" data-toggle="button">Save</button>
+                        </div>
+                    </div>
+
+                    <br />
+                    <div class="row">
+                        <label style="margin-left: 25px">Detune: </label>
+                        <input type="range"  min="0" max="100" value="0" oninput="synthesizer.detune(this.value)" style="margin-left: 25px"/>
+                    </div>
+                    
+                    <div class="row">
+                        <br />
+                        <div class='col-md-2' style="margin-left: 15px">
+                            <button onClick="synthesizer.toggleDistortion()" class="btn btn-mocha"data-toggle="button" data-toggle="button" >Distortion</button>
+                        </div>
+                    </div>
+
+                    <br />
+                    <label style="margin-left: 15px">Harmonic Amplitudes: </label>
+                    <br  />
+                    <div id="harmonicSliders"></div>
+                    <br />
+                </div>
             </div>
         </div>
 

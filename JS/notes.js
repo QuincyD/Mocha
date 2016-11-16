@@ -1,3 +1,8 @@
+var color1 = 'rgb(40, 44, 52)'; // background color: gray
+var color2 = '#009999'; // font color: pure blue
+var color3 = 'rgb(255, 0, 0)'; // accent color: pure red
+
+
 var notes = [];
 var frequencies = [];
 
@@ -70,7 +75,7 @@ function tunerView1(frequency) {
   	var canvasCtx = canvas.getContext("2d");
 
     var WIDTH = 500;
-    var HEIGHT = 200;
+    var HEIGHT = 50;
   	canvas.width = WIDTH;
   	canvas.height = HEIGHT;
 
@@ -90,7 +95,7 @@ function tunerView1(frequency) {
     var markerHeight = 30;
 
 	//draw tuner range lines
-	canvasCtx.strokeStyle = '#fff0cd';
+	canvasCtx.strokeStyle = color3;
     canvasCtx.moveTo(lineStartX, lineY);
 	canvasCtx.lineTo(lineEndX, lineY);
 
@@ -107,7 +112,7 @@ function tunerView1(frequency) {
 	//draw range labels
 	noteFreq = getNote(frequency);
 	canvasCtx.font = '30px serif';
-	canvasCtx.fillStyle = '#009999';
+	canvasCtx.fillStyle = color3;
 	canvasCtx.fillText("-1/2", lineStartX - 5, lineY + 35);
 	canvasCtx.fillText(noteFreq[0], mid - 15, lineY + 35);
 	canvasCtx.fillText("1/2", lineEndX - 15, lineY + 35);
@@ -116,7 +121,7 @@ function tunerView1(frequency) {
 	xPos = (lineWidth * (noteFreq[1] + 0.5)) - markerWidth/2;
 	yPos = lineY - markerHeight/2;
 
-	canvasCtx.fillStyle = "#009999";
+	canvasCtx.fillStyle = color2;
 	canvasCtx.fillRect(xPos, yPos, markerWidth, markerHeight);
 	
 	canvasCtx.moveTo(xPos + markerWidth/2, yPos - 5);
@@ -133,12 +138,12 @@ function tunerView2(frequency) {
 
 
     var WIDTH = 500;
-    var HEIGHT = 200;
+    var HEIGHT = 50;
   	canvas.width = WIDTH;
   	canvas.height = HEIGHT;
 
     canvasCtx.lineWidth = 2;
-    canvasCtx.strokeStyle = '#009999';
+    canvasCtx.strokeStyle = color2;
 
     canvasCtx.beginPath();
 
@@ -154,13 +159,17 @@ function tunerView2(frequency) {
     	minusFreq = false
     }
     var amountIndicator = Math.abs(normFreq)*10
-    
-    canvasCtx.moveTo(midX, midY - 20);
-    canvasCtx.lineTo(midX, midY + 20);
+    var indicatorColor = "rgb(0, 255, 0)";
 
     //draw range labels
+    var threshold = 0.5;
+    if (amountIndicator < threshold){
+    	canvasCtx.fillStyle = indicatorColor;
+    }
+    else {
+    	canvasCtx.fillStyle = color2;
+    }
 	canvasCtx.font = '30px serif';
-	canvasCtx.fillStyle = '#009999';
 	var notePullX = 17;
 	var notePullY = 10;
 	if (note.length > 3) {
@@ -176,11 +185,14 @@ function tunerView2(frequency) {
 		canvasCtx.moveTo(minStart - i*31, midY);
 		canvasCtx.lineTo(minStart - 16 - i*31, midY);
 		if (minusFreq){
-			if(amountIndicator > i) {
-				canvasCtx.strokeStyle = 'rgb(0,255,0)';
+			if (amountIndicator < threshold){
+				canvasCtx.strokeStyle = color2;
+			}
+			else if(amountIndicator > i) {
+				canvasCtx.strokeStyle = indicatorColor;
 			}
 			else{
-				canvasCtx.strokeStyle = '#009999';
+				canvasCtx.strokeStyle = color2;
 			}
 			
 		}
@@ -196,18 +208,19 @@ function tunerView2(frequency) {
 		canvasCtx.moveTo(plusStart + i*31, midY);
 		canvasCtx.lineTo(plusStart + 16 + i*31, midY);
 		if (!minusFreq){
-			if(amountIndicator > i) {
-				canvasCtx.strokeStyle = 'rgb(0,255,0)';
+			if (amountIndicator < threshold){
+				canvasCtx.strokeStyle = color2;
+			}
+			else if(amountIndicator > i) {
+				canvasCtx.strokeStyle = indicatorColor;
 			}
 			else{
-				canvasCtx.strokeStyle = '#009999';
+				canvasCtx.strokeStyle = color2;
 			}
 			
 		}
 		canvasCtx.stroke();
 	}
-
-	canvasCtx.stroke();
 
  
 
