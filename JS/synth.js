@@ -48,10 +48,10 @@ function Synth() {
 
     // Setting properties on the detune slider
     detuneSlider = document.getElementById("detune-slider");
-    detuneSlider.onmousedown = sliderMouseDown;
-    detuneSlider.onmouseup = sliderMouseUp;
-    detuneSlider.onmousemove = sliderMouseMove;
-    detuneSlider.onclick = sliderMouseClick;
+    detuneSlider.onmousedown = horiSliderMouseDown;
+    detuneSlider.onmouseup = horiSliderMouseUp;
+    detuneSlider.onmousemove = horiSliderMouseMove;
+    detuneSlider.onclick = horiSliderMouseClick;
 
     // Create the harmonic sliders
     let x, div, perc = 100/this.numHarm;
@@ -73,10 +73,10 @@ function Synth() {
       x.step = ".01";
       x.value = ".1";
       x.oninput = createOnInput(i);
-      x.onmousedown = sliderMouseDown;
-      x.onmouseup = sliderMouseUp;
-      x.onmousemove = sliderMouseMove;
-      x.onclick = sliderMouseClick;
+      x.onmousedown = vertSliderMouseDown;
+      x.onmouseup = vertSliderMouseUp;
+      x.onmousemove = vertSliderMouseMove;
+      x.onclick = vertSliderMouseClick;
 
       // Add to the html
       div.appendChild(x);
