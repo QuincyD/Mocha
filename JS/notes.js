@@ -9,7 +9,7 @@ var frequencies = [];
 var baseNotes = ["C", "C#/Db", "D", "D#/Eb", "E", "F",
 				 "F#/Gb", "G", "G#/Ab", "A", "A#/Bb", "B"];
 var count = 0;
-// Loop does not add the number to the sharp; 
+// Loop does not add the number to the sharp;
 // Number is only added to the flat, but number is implied.
 for (i = 0; i < 9; i++){
 	for (j = 0; j < 12; j++){
@@ -35,11 +35,11 @@ for (i = -57,j = 0; i < 51; i++, j++) {
 function getNote(frequency) {
 
 	if(frequency < 16.35) {
-		console.log('Below lowest frequency!');
+		// console.log('Below lowest frequency!');
 		return ['C0', (16.35 - frequency)/16.35];
 	}
 	if(frequency > 7902.13) {
-		console.log('Above highest frequency!');
+		// console.log('Above highest frequency!');
 		return ['B8',(frequency - 7902.13)/7902.13];
 
 	}
@@ -58,7 +58,7 @@ function getNote(frequency) {
 	noteDist = frequencies[upperIndex] - frequencies[lowerIndex];
 	norm1 = (frequency - frequencies[lowerIndex])/noteDist;
 	norm2 = (frequencies[upperIndex] - frequency)/noteDist;
-	
+
 
 	if (norm1 <= norm2) {
 		return [notes[lowerIndex], norm1];
@@ -107,7 +107,7 @@ function tunerView1(frequency) {
 
 	canvasCtx.moveTo(lineEndX, lineY - 10);
 	canvasCtx.lineTo(lineEndX, lineY + 10);
-	
+
 
 	//draw range labels
 	noteFreq = getNote(frequency);
@@ -123,10 +123,10 @@ function tunerView1(frequency) {
 
 	canvasCtx.fillStyle = color2;
 	canvasCtx.fillRect(xPos, yPos, markerWidth, markerHeight);
-	
+
 	canvasCtx.moveTo(xPos + markerWidth/2, yPos - 5);
 	canvasCtx.lineTo(xPos + markerWidth/2, yPos + markerHeight + 5);
-	
+
 
 	canvasCtx.stroke();
 
@@ -161,6 +161,9 @@ function tunerView2(frequency) {
     var amountIndicator = Math.abs(normFreq)*10
     var indicatorColor = "rgb(0, 255, 0)";
 
+    canvasCtx.moveTo(midX, midY - 20);
+    canvasCtx.lineTo(midX, midY + 20);
+
     //draw range labels
     var threshold = 0.5;
     if (amountIndicator < threshold){
@@ -194,7 +197,7 @@ function tunerView2(frequency) {
 			else{
 				canvasCtx.strokeStyle = color2;
 			}
-			
+
 		}
 		canvasCtx.stroke();
 	}
@@ -217,11 +220,12 @@ function tunerView2(frequency) {
 			else{
 				canvasCtx.strokeStyle = color2;
 			}
-			
+
 		}
 		canvasCtx.stroke();
 	}
 
- 
+	canvasCtx.stroke();
+
 
 }

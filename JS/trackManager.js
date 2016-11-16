@@ -1,3 +1,7 @@
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 function TrackManager() {
   var _this = this;
   this.trackList = {};
@@ -29,14 +33,14 @@ function TrackManager() {
   // The location of the seekbar
   this.seekbar = {
     'position': 0
-  }; 
+  };
 
   // Are we currently playing audio?
   this.playingAudio = false;
 
   // The refresh rate of the canvas in ms
   // Used for timing of the audio playback
-  this.refreshRate = 10;
+  this.refreshRate = 5;
 
   // Variable for determine which track is being clickd
   // Initialized to an invalid state
@@ -63,6 +67,22 @@ function TrackManager() {
     }
     this.tracksValid = true;
   } // end validateTracks()
+
+  this.resizeTrackCanvas = function(newSizeInSeconds) {
+    this.secondsToShow = newSizeInSeconds;
+    this.recalculateTrackWidths();
+    this.invalidateCanvas();
+  }
+
+  this.recalculateTrackWidths = function() {
+    for (var i in this.trackList) {
+      var trackDuration = this.trackList[i].duration;
+      var secondsShowing = this.secondsToShow;
+      var trackOffset = this.trackList[i].offsetTime;
+      this.trackList[i].w = (trackDuration / secondsShowing) * trackWidth;
+      this.trackList[i].x = (trackOffset / secondsShowing) * trackWidth;
+    }
+  }
 
   // Returns the number of tracks in the trackList
   // O(n) for getting length, but O(1) on lookup is worth it
@@ -111,9 +131,25 @@ function TrackManager() {
   // Adds the new track to the trackList and marks it as invalid
   // until verified upon playback.
   // parameters: blobUrl - a url pointing to a blob of audio dataArray
-  this.addTrack = function(blobUrl) {
+  this.addTrack = function(blobUrl, id_in=false, offsetTime_in=false, x_in=false) {
     // Get the next valid track id
-    var trackId = this.getNextId();
+    if (id_in) {
+      var trackId = id_in;
+    } else {
+      var trackId = this.getNextId();
+    }
+
+    if (offsetTime_in) {
+      var offsetTime = offsetTime_in;
+    } else {
+      var offsetTime = 0;
+    }
+
+    if (x_in) {
+      var x = x_in;
+    } else {
+      var x = 0;
+    }
 
     // Create an html5 audio object to hold the audio data
     var audioObj = new Audio(blobUrl);
@@ -123,14 +159,21 @@ function TrackManager() {
     // Once we've loaded the metadata for this audio object
     // go ahead and build the new track object and put it in trackList
     audioObj.onloadedmetadata = function() {
+
+      // Check if we need to resize all of the tracks to accommodate this big fucking thing
+      var duration = audioObj.duration;
+      if (duration > _this.secondsToShow) {
+        _this.resizeTrackCanvas((Math.floor(duration/15) + 1) * 15);
+      }
+
       var track = {};
 
       track.id = trackId; // Unique identifier (key in trackList)
       track.audioObj = audioObj; // Link the Audio object we just made
-      track.duration = audioObj.duration; // Duration of audio (from metadata)
+      track.duration = duration; // Duration of audio (from metadata)
       track.muted = false; // Is this track muted?
-      track.offsetTime = 0; // How long to wait before playing track
-      track.x = 0; // x location on canvas
+      track.offsetTime = offsetTime; // How long to wait before playing track
+      track.x = x; // x location on canvas
       track.y = (canvasHeight/_this.tracksToShow) * (_this.getNumTracks()); // y location on canvas
       track.w = (track.duration / _this.secondsToShow) * trackWidth; // width on canvas
       track.h = canvasHeight/_this.tracksToShow; // height on canvas
@@ -150,7 +193,13 @@ function TrackManager() {
       // We added a new track, invalidate the tracklist for now
       _this.invalidateTracks();
     }
+
   } // end addTrack()
+
+  this.deleteTrack = function(trackId) {
+    delete _this.trackList[trackId];
+    _this.invalidateCanvas();
+  }
 
   // Begin playback on all the tracks in the tracklist that should be played
   // Tracks that are not muted should be played
@@ -182,11 +231,9 @@ function TrackManager() {
 
   // Pauses the playback on all tracks and resets their seek to 0
   this.stopAllTracks = function() {
-    console.log("stopping2");
     for (let i in this.trackList) {
       this.trackList[i].audioObj.pause();
       this.trackList[i].audioObj.currentTime = 0;
-      console.log(this.trackList[i].audioObj.currentTime);
     }
     // We're done playing audio if we're stopping playback
     this.playingAudio = false;
@@ -214,6 +261,120 @@ function TrackManager() {
   this.getTracks = function() {
     return this.trackList;
   } // end getTracks()
+
+  // Function to compile all of the track information to a downloadable json file
+  this.exportProject = function() {
+
+    // Add some useful information to the json object and have the client download it
+    function exportJson() {
+      project['nextId'] = _this.nextId;
+      project['secondsToShow'] = _this.secondsToShow;
+      project['tracksToShow'] = _this.tracksToShow;
+      var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(project));
+
+      // Update the hidden link element and click it
+      $("#projectDownload").attr('href', 'data:' + data);
+      $("#projectDownload").attr('download', 'mochaProject.json');
+      document.getElementById('projectDownload').click();
+    } // end exportJson()
+
+    // Function for converting blob to base64
+    function blobToBase64(blob, callback, trackId) {
+      var reader = new FileReader();
+      reader.onload = function() {
+        var dataUrl = reader.result;
+        var base64 = dataUrl.split(',')[1];
+        callback(base64, trackId);
+      }
+      reader.readAsDataURL(blob);
+    } // end blobToBase64
+
+    // Attach the base64 string to a track
+    function saveBase64ToTrack(base64, trackId) {
+      _this.trackList[trackId].blob = base64;
+      project['tracks'].push(_this.trackList[trackId]);
+    } // end saveBase64ToTrack()
+
+    // Save all of the track objects
+    var project = {};
+    project['tracks'] = [];
+    var blobs = [];
+
+    // For every track object, async fetch the raw blob data from the blobURL
+    for (var i in this.trackList) {
+      var url = this.trackList[i]['audioObj'].src;
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', url);
+      xhr.responseType = 'blob';
+
+      xhr.onload = function(e) {
+        var blob = new Blob([this.response], {type: 'audio/ogg'});
+        blobToBase64(blob, saveBase64ToTrack, this.trackId);
+      }
+      xhr.send();
+      xhr.trackId = i;
+    }
+
+    // Wait a second before exporting the json
+    // This let's the blob data be fetched
+    // Don't worry this will probably never fail :|
+    setTimeout(exportJson, 1000);
+
+  } //end exportProject()
+
+  // Function for importing a json file created by exportProject()
+  // Loads all of the project parameters and the track objects from the file
+  this.importProject = function(file) {
+
+    // Begin loading the project
+    function loadProject(project) {
+      // Bookkeeping stuff about the project
+      _this.nextId = project.nextId;
+      _this.secondsToShow = project.secondsToShow;
+      _this.tracksToShow = project.tracksToShow;
+      _this.trackList = {};
+
+      // Go through every track that was saved in the json
+      for (let i = 0; i < project.tracks.length; i++) {
+        // Convert the base64 string to a binary blob
+        var base64str = project.tracks[i].blob;
+        var binary = atob(base64str.replace(/\s/g, ''));
+        var len = binary.length;
+        var buffer = new ArrayBuffer(len);
+        var view = new Uint8Array(buffer);
+        for (var j = 0; j < len; j++) {
+         view[j] = binary.charCodeAt(j);
+        }
+        var blob = new Blob( [view], { type: 'audio.ogg; codecs=opus' });
+
+        // Get a blob URL for the fresh blob
+        var audioBlobUrl = URL.createObjectURL(blob);
+
+        // Add the track associated with this blob including some additional information
+        // about its placement from the saved json
+        _this.addTrack(audioBlobUrl,
+                       project.tracks[i].id,
+                       project.tracks[i].offsetTime,
+                       project.tracks[i].x);
+      }
+    } // end loadProject()
+
+    // Read the json file as parsed text
+    var reader = new FileReader();
+    reader.onload = function(event) {
+      var projectData = event.target.result;
+      var project = JSON.parse(projectData);
+      loadProject(project);
+    } // end reader.onload()
+    reader.readAsText(file);
+  } // end importProject()
+
+  // Wait for the file upload element to change
+  $("#file-import").change(function() {
+    // Then assume we want to import the new file
+    _this.importProject(this.files[0]);
+  }); // end "file-import".change()
 
   ///// UI Stuff for the track canvas /////
 
@@ -274,7 +435,6 @@ function TrackManager() {
 
     // Find what track the mouse is currently moving over
     _this.clickedTrackId = this.getClickedTrack(mousePos);
-    console.log(_this.clickedTrackId);
 
     // An offset of the mouse vs. the dragged track
     // Allows tracks to be grabbed anywhere and still act naturally
@@ -326,6 +486,21 @@ function TrackManager() {
     // Calculate the new position of the track
     var newPosition = mousePos['x'] - this.dragOffset;
 
+    // Check that we aren't out of bounds to the left
+    if (newPosition < 0) {
+      newPosition = 0;
+    }
+
+    var trackW = _this.trackList[_this.clickedTrackId["id"]].w;
+    var newXRight = newPosition + trackW;
+
+    if (newXRight > trackWidth) {
+      newPosition = trackWidth - trackW;
+    }
+
+    // Check that we aren't out of bounds to the right
+    if (newPosition )
+
     // Move the track on the canvas
     _this.trackList[_this.clickedTrackId["id"]].x = newPosition;
 
@@ -339,7 +514,6 @@ function TrackManager() {
   // On click, check if we are on a track
   // Mute the track if we are
   this.canvas.onclick = function(evt) {
-
     // Check if this was actually a click and not a drag
     var xMove = Math.abs(this.mouseXDown - this.mouseXUp);
     var yMove = Math.abs(this.mouseYDown - this.mouseYUp);
@@ -368,7 +542,7 @@ function TrackManager() {
     if (this.mouseXDown >= (canvasWidth - _this.trackButtonWidth)) {
       // Corresponds to the right button of the track being pressed
       // Action: Delete track
-      console.log("delete");    //TODO @Tyler
+      _this.deleteTrack(_this.clickedTrackId['id'])
     } else if (this.mouseXDown >= (canvasWidth - 2 * _this.trackButtonWidth)) {
       // Corresponds to the left button of the track being pressed
       // Action: Mute/Unmute track
@@ -478,7 +652,7 @@ function TrackManager() {
       this.ctx.fillText(String.fromCharCode(0xe038), rightButtonX, buttonY);
     } else {
       this.ctx.fillText(String.fromCharCode(0xe036), rightButtonX, buttonY);
-    }   
+    }
   } // end drawTrack()
 
   // Function to mark the Canvas for redrawing

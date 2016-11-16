@@ -46,6 +46,13 @@ function Synth() {
     this.distortion.curve = makeDistortionCurve(80);
     this.distortion.oversample = '4x';
 
+    // Setting properties on the detune slider
+    detuneSlider = document.getElementById("detune-slider");
+    detuneSlider.onmousedown = horiSliderMouseDown;
+    detuneSlider.onmouseup = horiSliderMouseUp;
+    detuneSlider.onmousemove = horiSliderMouseMove;
+    detuneSlider.onclick = horiSliderMouseClick;
+
     // Create the harmonic sliders
     let x, div, perc = 100/this.numHarm;
     let harmonicDiv = document.getElementById("harmonicSliders");
@@ -66,6 +73,10 @@ function Synth() {
       x.step = ".01";
       x.value = ".1";
       x.oninput = createOnInput(i);
+      x.onmousedown = vertSliderMouseDown;
+      x.onmouseup = vertSliderMouseUp;
+      x.onmousemove = vertSliderMouseMove;
+      x.onclick = vertSliderMouseClick;
 
       // Add to the html
       div.appendChild(x);
@@ -166,6 +177,21 @@ function Synth() {
     return true;
   };
 
+  this.timer = function(timeRemaining)
+  {
+    if (timeRemaining <= 0)
+    {
+      $("#timer-value").val(0);
+      $('#toggle-recording').prop('disabled', false);
+      _this.timerTimeout = null;
+      _this.toggleRecording();
+    }
+    else {
+      $("#timer-value").val(timeRemaining - 1);
+      _this.timerTimeout = window.setTimeout(_this.timer, 1000, timeRemaining - 1);
+    }
+  }
+
   this.toggle = function() {
     this.playing ? this.stop() : this.start();
     this.playing = !this.playing;
@@ -176,13 +202,25 @@ function Synth() {
     }
   };
 
-  this.toggleRecording = function() {
+  this.toggleRecordingCallback = function() {
     if (this.playing)
     {
-      this.recording ? this.recorder.stopRecording() : this.recorder.startRecording();
-      this.recording = !this.recording;
+      if (!this.recording && document.getElementById("timer-on").checked)
+      {
+        $('#toggle-recording').prop('disabled', true);
+        this.timer(parseInt($("#timer-value").val(), 10));
+      }
+      else {
+        this.toggleRecording();
+      }
     }
   };
+
+  // Need to separate this code out to be able to asynchronously call from timer
+  this.toggleRecording = function() {
+    this.recording ? this.recorder.stopRecording() : this.recorder.startRecording();
+    this.recording = !this.recording;
+  }
 
   this.toggleMetronome = function() {
     this.playMetronome ? this.metronome.stop() : this.metronome.start();
@@ -200,4 +238,8 @@ function Synth() {
   this.getTracks = function() {
     return this.recorder.getTracks();
   };
+
+  this.exportProject = function() {
+    this.recorder.exportProject();
+  }
 }

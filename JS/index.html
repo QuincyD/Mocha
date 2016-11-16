@@ -13,6 +13,7 @@
         <script src="recorder.js"></script>
         <script src="leapmotion.js"></script>
         <script src="main.js"></script>
+        <script src="sliders.js"></script>
         <script src="notes.js"></script>
 
     <!-- Bootstrap -->
@@ -45,6 +46,11 @@ body {
                     <br />
                     <h1>M<small>OCHA</small>: M<small>OTION</small> C<small>OMPOSER</small></h1>
                 </div>
+
+                <div class="col-md-1" style="margin-left: 15px">
+                    <input type="file" id="file-import" class="btn btn-mocha"></input>
+                </div>
+
             </div>
 
             <div class="row">
@@ -58,17 +64,21 @@ body {
                     
                     <div class="row">
                         <br />
+
                         <div class='col-md-2 col-md-push-1'>
                             <button onClick="synthesizer.toggle()" class="btn btn-mocha" data-toggle="button">Toggle Synth</button>
                         </div>
 
                         <div class="col-md-2 col-md-push-2">
-                            <button id="toggle-recording" onClick="synthesizer.toggleRecording()" class="btn btn-mocha" data-toggle="button">Toggle Recording</button>
+
+                            <button id="toggle-recording" onClick="synthesizer.toggleRecordingCallback()" class="btn btn-mocha">Toggle Recording</button>
+
                         </div>
 
                         <div class="col-md-2 col-md-push-3">
                             <button onClick="synthesizer.playback()" class="btn btn-mocha">Playback Recording</button>
                         </div>
+
                     </div>
 
                     <div class="row">
@@ -82,9 +92,14 @@ body {
 
                     <div class="row">
                         <div class='col-md-8 col-md-push-2'>
-                            <label>BPM:</label>
-                            <input type="text" value="60" class="bpm-value" style="color: black"></input>
+                            <label>BPM:  </label>
+                            <input type="number" value="60" min="20" max="300" id="bpm-value" style="color: black"/>
                             <button onclick="synthesizer.toggleMetronome()" class="btn btn-mocha" data-toggle="button">Toggle Metronome</button>
+
+                            <label>Timer: </label>
+                            <input type="number" value="10" id="timer-value" min="0" max="20" style="color: black"/>
+                            <input type="checkbox" id="timer-on" /> On?
+
                         </div>
                     </div>
 
@@ -117,25 +132,22 @@ body {
                 </div>
                 <div class="col-md-3">
                     <div class="row">
-                        <div class="col-md-1" style="margin-left: 15px">
-                            <button onClick="" class="btn btn-mocha" data-toggle="button">Load</button>
-                        </div>
 
                         <div class="col-md-1 col-md-push-2" style="margin-left: 15px">
-                            <button onClick="" class="btn btn-mocha" data-toggle="button">Save</button>
+                            <button onclick="synthesizer.exportProject()" class="btn btn-mocha">Save Project</button>
                         </div>
                     </div>
 
                     <br />
                     <div class="row">
                         <label style="margin-left: 25px">Detune: </label>
-                        <input type="range"  min="0" max="100" value="0" oninput="synthesizer.detune(this.value)" style="margin-left: 25px"/>
+                        <input id="detune-slider" type="range"  min="0" max="100" value="0" oninput="synthesizer.detune(this.value)" style="margin-left: 25px"/>
                     </div>
                     
                     <div class="row">
                         <br />
                         <div class='col-md-2' style="margin-left: 15px">
-                            <button onClick="synthesizer.toggleDistortion()" class="btn btn-mocha"data-toggle="button" data-toggle="button" >Distortion</button>
+                            <button onClick="synthesizer.toggleDistortion()" class="btn btn-mocha" data-toggle="button" >Distortion</button>
                         </div>
                     </div>
 
@@ -147,6 +159,6 @@ body {
                 </div>
             </div>
         </div>
-
+        <a id="projectDownload"></a>
     </body>
 </html>
