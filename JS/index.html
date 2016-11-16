@@ -41,32 +41,46 @@ body {
     <!-- New Body -->
     <body>
         <div id="mega" class="containter">
+            <br />
             <div class="row">
                 <div class="col-md-8">
-                    <br />
+                
                     <h1>M<small>OCHA</small>: M<small>OTION</small> C<small>OMPOSER</small></h1>
+
                 </div>
 
-                <div class="col-md-1" style="margin-left: 15px">
+                <div class="col-md-1" style="margin-top: 15px">
+
                     <input type="file" id="file-import" class="btn btn-mocha"></input>
+
                 </div>
 
             </div>
 
             <div class="row">
-            <br />
+
+                <br />
+
                 <div class="col-md-8">
+
                     <div class="row">
+
                         <div class="col-md-8">
+
                             <canvas id="trackCanvas" class="track-canvas" width="1000px" height="300px"></canvas>
+
                         </div>
+
                     </div>
                     
                     <div class="row">
+
                         <br />
 
                         <div class='col-md-2 col-md-push-1'>
+
                             <button onClick="synthesizer.toggle()" class="btn btn-mocha" data-toggle="button">Toggle Synth</button>
+
                         </div>
 
                         <div class="col-md-2 col-md-push-2">
@@ -76,41 +90,59 @@ body {
                         </div>
 
                         <div class="col-md-2 col-md-push-3">
+
                             <button onClick="synthesizer.playback()" class="btn btn-mocha">Playback Recording</button>
+
                         </div>
 
                     </div>
 
                     <div class="row">
+
                         <br />
+
                         <div class="col-md-8">
+
                             <canvas id="can" width="1000px" height="100px"></canvas>
+
                         </div>
+
                     </div>
 
                     <br />
 
                     <div class="row">
+
                         <div class='col-md-8 col-md-push-2'>
+
                             <label>BPM:  </label>
                             <input type="number" value="60" min="20" max="300" id="bpm-value" style="color: black"/>
                             <button onclick="synthesizer.toggleMetronome()" class="btn btn-mocha" data-toggle="button">Toggle Metronome</button>
+
+                            <br /><br />
 
                             <label>Timer: </label>
                             <input type="number" value="10" id="timer-value" min="0" max="20" style="color: black"/>
                             <input type="checkbox" id="timer-on" /> On?
 
                         </div>
+
                     </div>
 
                     <div class='row'>
+
                         <br />
+
                         <div class='col-md-5 col-md-push-2'>
+
                             <canvas id="tunerCanvas"></canvas>
+
                         </div>
+
                     </div>
 
                     <script type="text/javaScript">
+
                         width = screen.width - 25;
                         height = screen.height - 200;
 
@@ -127,38 +159,59 @@ body {
                         wave = document.getElementById("can");
                         wave.width = canWidth;
                         wave.height = canHeight;
+
                     </script>
                     
                 </div>
+
                 <div class="col-md-3">
+
                     <div class="row">
 
                         <div class="col-md-1 col-md-push-2" style="margin-left: 15px">
+
                             <button onclick="synthesizer.exportProject()" class="btn btn-mocha">Save Project</button>
+
                         </div>
+
                     </div>
 
                     <br />
                     <div class="row">
+
                         <label style="margin-left: 25px">Detune: </label>
                         <input id="detune-slider" type="range"  min="0" max="100" value="0" oninput="synthesizer.detune(this.value)" style="margin-left: 25px"/>
+
                     </div>
                     
                     <div class="row">
+
                         <br />
+
                         <div class='col-md-2' style="margin-left: 15px">
+
                             <button onClick="synthesizer.toggleDistortion()" class="btn btn-mocha" data-toggle="button" >Distortion</button>
+
                         </div>
+
                     </div>
 
                     <br />
+
                     <label style="margin-left: 15px">Harmonic Amplitudes: </label>
                     <br  />
                     <div id="harmonicSliders"></div>
+
                     <br />
+
                 </div>
+
             </div>
+
         </div>
+
         <a id="projectDownload"></a>
+
     </body>
+
 </html>

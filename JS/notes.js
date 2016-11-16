@@ -161,9 +161,6 @@ function tunerView2(frequency) {
     var amountIndicator = Math.abs(normFreq)*10
     var indicatorColor = "rgb(0, 255, 0)";
 
-    canvasCtx.moveTo(midX, midY - 20);
-    canvasCtx.lineTo(midX, midY + 20);
-
     //draw range labels
     var threshold = 0.5;
     if (amountIndicator < threshold){
