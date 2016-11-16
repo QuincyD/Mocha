@@ -18,7 +18,7 @@ function findPos(ele) {
 			 "y": y };
 }
 
-function sliderMouseDown(evt) {
+function vertSliderMouseDown(evt) {
 	curEle = document.elementFromPoint(evt.clientX, evt.clientY);
 
 	if (!curEle) {
@@ -31,14 +31,9 @@ function sliderMouseDown(evt) {
 	// Determine the parameters of the object
 	let sliderPos = findPos(curEle);
 	
-	let leftX = sliderPos["x"];
-	let rightX = leftX + curEle.clientWidth;
-
-	let topY = sliderPos["y"];
 	let bottomY = sliderPos["y"] + curEle.clientHeight;
 	
 	// Determining normalized position within the slider box
-	// let norm = 1 - ((evt.clientY - topY) / slider.clientHeight);
 	let norm = (bottomY - evt.clientY) / curEle.clientHeight;
 
 	// Ensuring the normalized value is valid
@@ -55,22 +50,17 @@ function sliderMouseDown(evt) {
 	curEle.value = range * norm;
 }
 
-function sliderMouseUp(evt) {
+function vertSliderMouseUp(evt) {
 	clicking = false;
 }
 
-function sliderMouseClick(evt) {
+function vertSliderMouseClick(evt) {
 	// Determine the parameters of the object
 	let sliderPos = findPos(curEle);
 	
-	let leftX = sliderPos["x"];
-	let rightX = leftX + curEle.clientWidth;
-
-	let topY = sliderPos["y"];
 	let bottomY = sliderPos["y"] + curEle.clientHeight;
 	
 	// Determining normalized position within the slider box
-	// let norm = 1 - ((evt.clientY - topY) / slider.clientHeight);
 	let norm = (bottomY - evt.clientY) / curEle.clientHeight;
 
 	// Ensuring the normalized value is valid
@@ -88,7 +78,94 @@ function sliderMouseClick(evt) {
 	curEle = null;
 }
 
-function sliderMouseMove(evt) {
+function vertSliderMouseMove(evt) {
+	if (!clicking) {
+		return;
+	}
+
+	// Determine the parameters of the object
+	let sliderPos = findPos(curEle);
+	
+	let bottomY = sliderPos["y"] + curEle.clientHeight;
+	
+	// Determining normalized position within the slider box
+	let norm = (bottomY - evt.clientY) / curEle.clientHeight;
+
+	// Ensuring the normalized value is valid
+	if (norm < 0) {
+		norm = 0;
+	} else if (norm > 1) {
+		norm = 1;
+	}
+
+	// Determining the range of the slider for the normalized data
+	let range = curEle.max - curEle.min
+
+	// Applying the update to the slider
+	curEle.value = range * norm;
+}
+
+function horiSliderMouseDown(evt) {
+	curEle = document.elementFromPoint(evt.clientX, evt.clientY);
+
+	if (!curEle) {
+		console.log("Failed to find slider");
+		return;
+	}
+
+	clicking = true;
+
+	// Determine the parameters of the object
+	let sliderPos = findPos(curEle);
+	
+	let leftX = sliderPos["x"];
+	
+	// Determining normalized position within the slider box
+	let norm = (leftX - evt.clientX) / curEle.clientWidth;
+
+	// Ensuring the normalized value is valid
+	if (norm < 0) {
+		norm = 0;
+	} else if (norm > 1) {
+		norm = 1;
+	}
+
+	// Determining the range of the slider for the normalized data
+	let range = curEle.max - curEle.min
+
+	// Applying the update to the slider
+	curEle.value = range * norm;
+}
+
+function horiSliderMouseUp(evt) {
+	clicking = false;
+}
+
+function horiSliderMouseClick(evt) {
+	// Determine the parameters of the object
+	let sliderPos = findPos(curEle);
+	
+	let leftX = sliderPos["x"];
+	
+	// Determining normalized position within the slider box
+	let norm = (leftX - evt.clientX) / curEle.clientWidth;
+
+	// Ensuring the normalized value is valid
+	if (norm < 0) {
+		norm = 0;
+	} else if (norm > 1) {
+		norm = 1;
+	}
+
+	// Determining the range of the slider for the normalized data
+	let range = curEle.max - curEle.min
+
+	// Applying the update to the slider
+	curEle.value = range * norm;
+	curEle = null;
+}
+
+function horiSliderMouseMove(evt) {
 	if (!clicking) {
 		return;
 	}
@@ -97,14 +174,9 @@ function sliderMouseMove(evt) {
 	let sliderPos = findPos(curEle);
 	
 	let leftX = sliderPos["x"];
-	let rightX = leftX + curEle.clientWidth;
-
-	let topY = sliderPos["y"];
-	let bottomY = sliderPos["y"] + curEle.clientHeight;
 	
 	// Determining normalized position within the slider box
-	// let norm = 1 - ((evt.clientY - topY) / slider.clientHeight);
-	let norm = (bottomY - evt.clientY) / curEle.clientHeight;
+	let norm = (leftX - evt.clientX) / curEle.clientWidth;
 
 	// Ensuring the normalized value is valid
 	if (norm < 0) {
