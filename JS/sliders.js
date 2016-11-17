@@ -121,7 +121,7 @@ function horiSliderMouseDown(evt) {
 	let leftX = sliderPos["x"];
 	
 	// Determining normalized position within the slider box
-	let norm = (leftX - evt.clientX) / curEle.clientWidth;
+	let norm = (evt.clientX - leftX) / curEle.clientWidth;
 
 	// Ensuring the normalized value is valid
 	if (norm < 0) {
@@ -148,7 +148,7 @@ function horiSliderMouseClick(evt) {
 	let leftX = sliderPos["x"];
 	
 	// Determining normalized position within the slider box
-	let norm = (leftX - evt.clientX) / curEle.clientWidth;
+	let norm = (evt.clientX - leftX) / curEle.clientWidth;
 
 	// Ensuring the normalized value is valid
 	if (norm < 0) {
@@ -176,7 +176,7 @@ function horiSliderMouseMove(evt) {
 	let leftX = sliderPos["x"];
 	
 	// Determining normalized position within the slider box
-	let norm = (leftX - evt.clientX) / curEle.clientWidth;
+	let norm = (evt.clientX - leftX) / curEle.clientWidth;
 
 	// Ensuring the normalized value is valid
 	if (norm < 0) {
