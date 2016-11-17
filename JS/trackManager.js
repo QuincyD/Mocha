@@ -638,7 +638,7 @@ function TrackManager() {
     //Draw mute and delete buttons
     var leftButtonX = canvasWidth - (_this.trackButtonWidth / 2);
     var rightButtonX = canvasWidth - (1.5 * _this.trackButtonWidth);
-    var buttonY = canvasHeight / (2 * _this.tracksToShow);
+    var buttonY = thisTrack.y + (canvasHeight / (2 * _this.tracksToShow));
 
     this.ctx.textAlign = 'center';
     this.ctx.textBaseline = 'middle';
