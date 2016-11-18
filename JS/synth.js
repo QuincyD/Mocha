@@ -23,6 +23,34 @@ function Synth() {
     };
   }
 
+  function sliderMouseDown(i) {
+    return function(evt) {
+      vertSliderMouseDown(evt);
+      synthesizer.changeHarmVol(this.value, i);
+    };
+  }
+
+  function sliderMouseUp(i) {
+    return function(evt) {
+      vertSliderMouseUp(evt);
+      synthesizer.changeHarmVol(this.value, i);
+    };
+  }
+
+  function sliderMouseClick(i) {
+    return function(evt) {
+      vertSliderMouseClick(evt);
+      synthesizer.changeHarmVol(this.value, i);
+    };
+  }
+
+  function sliderMouseMove(i) {
+    return function(evt) {
+      vertSliderMouseMove(evt);
+      synthesizer.changeHarmVol(this.value, i);
+    };
+  }
+
   function makeDistortionCurve( amount ) {
     var k = typeof amount === 'number' ? amount : 50,
       n_samples = 44100,
@@ -73,10 +101,10 @@ function Synth() {
       x.step = ".01";
       x.value = ".1";
       x.oninput = createOnInput(i);
-      x.onmousedown = vertSliderMouseDown;
-      x.onmouseup = vertSliderMouseUp;
-      x.onmousemove = vertSliderMouseMove;
-      x.onclick = vertSliderMouseClick;
+      x.onmousedown = sliderMouseDown(i);
+      x.onmouseup = sliderMouseUp(i);
+      x.onmousemove = sliderMouseMove(i);
+      x.onclick = sliderMouseClick(i);
 
       // Add to the html
       div.appendChild(x);
