@@ -33,7 +33,7 @@ function Waveform(audioContext) {
 
       _this.analyser.getByteTimeDomainData(dataArray);
 
-      canvasCtx.fillStyle = 'rgb(255, 245, 205)';
+      canvasCtx.fillStyle = 'rgb(252, 252, 252)';
       canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
 
       canvasCtx.lineWidth = 2;
