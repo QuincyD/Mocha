@@ -25,12 +25,7 @@ body {
   background-color: var(--main-color);
 }
 
-#can {
-  color: #280f00;
-  border-radius: 10px;
-}
-
-.track-canvas {
+.mocha-canvas {
 	background-color: var(--canvas-color);
 }
 
