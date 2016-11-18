@@ -30,6 +30,12 @@ function TrackManager() {
   // The number of tracks to show to the user
   this.tracksToShow = 5;
 
+  // Stores the locations where tracks are drawn on the canvas
+  this.trackLocs = {};
+
+  // Stores the length of trackLocs
+  this.trackLocsLen = 0;
+
   // The location of the seekbar
   this.seekbar = {
     'position': 0
@@ -168,15 +174,21 @@ function TrackManager() {
 
       var track = {};
 
+      // Handling where the track is being drawn
+      track.drawPos = _this.getDrawTrackPos();
+      _this.trackLocs[track.drawPos] = trackId;
+      _this.trackLocsLen += 1;
+
+      // Setting other parameters
       track.id = trackId; // Unique identifier (key in trackList)
       track.audioObj = audioObj; // Link the Audio object we just made
       track.duration = duration; // Duration of audio (from metadata)
       track.muted = false; // Is this track muted?
       track.offsetTime = offsetTime; // How long to wait before playing track
       track.x = x; // x location on canvas
-      track.y = (canvasHeight/_this.tracksToShow) * (_this.getNumTracks()); // y location on canvas
+      track.y = (canvasHeight / _this.tracksToShow) * (track.drawPos - 1); // y location on canvas
       track.w = (track.duration / _this.secondsToShow) * trackWidth; // width on canvas
-      track.h = canvasHeight/_this.tracksToShow; // height on canvas
+      track.h = canvasHeight / _this.tracksToShow; // height on canvas
       track.opacity = 1; // Opacity of track on canvas
       track.verified = false; // Track isn't verified until playback begins
       // Add a function for playing (a weird workaround for settimeout bug?)
@@ -197,6 +209,10 @@ function TrackManager() {
   } // end addTrack()
 
   this.deleteTrack = function(trackId) {
+    let track = _this.trackList[trackId];
+    _this.trackLocs[track.drawPos] = undefined;
+    _this.trackLocsLen -= 1;
+
     delete _this.trackList[trackId];
     _this.invalidateCanvas();
   }
@@ -261,6 +277,31 @@ function TrackManager() {
   this.getTracks = function() {
     return this.trackList;
   } // end getTracks()
+
+  this.getDrawTrackPos = function() {
+    let val = this.trackLocsLen;
+    let new_ = true;
+
+    if (val === 0) {
+      return 1;
+    }
+
+    // Checking for empty tracks
+    for (var i = 1; i <= val; i++) {
+      if (this.trackLocs[i] === undefined) {
+        val = i;
+        new_ = false;
+        break;
+      }
+    }
+
+    // no empty tracks found, return max + 1
+    if (new_) {
+      val += 1;
+    }
+
+    return val;
+  } // end getDrawTrackPos()
 
   // Function to compile all of the track information to a downloadable json file
   this.exportProject = function() {
@@ -636,9 +677,10 @@ function TrackManager() {
     this.ctx.globalAlpha = 1;
 
     //Draw mute and delete buttons
+    var rowHeight = canvasHeight / _this.tracksToShow
     var leftButtonX = canvasWidth - (_this.trackButtonWidth / 2);
     var rightButtonX = canvasWidth - (1.5 * _this.trackButtonWidth);
-    var buttonY = thisTrack.y + (canvasHeight / (2 * _this.tracksToShow));
+    var buttonY = ((thisTrack.drawPos - 1) * rowHeight) + (rowHeight / 2);
 
     this.ctx.textAlign = 'center';
     this.ctx.textBaseline = 'middle';
