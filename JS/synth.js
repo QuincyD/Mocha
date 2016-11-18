@@ -14,6 +14,8 @@ function Synth() {
   this.harmSliders = [];
   this.distortion = this.audioCtx.createWaveShaper();
   this.isDistortion = false;
+  this.plusMinusTimeout = null;
+  this.plusMinusInterval = 300;
 
 
   // Use function return to create callbacks and avoid creating closures inline
@@ -63,7 +65,30 @@ function Synth() {
       curve[i] = ( 3 + k ) * x * 20 * deg / ( Math.PI + k * Math.abs(x) );
     }
     return curve;
-}
+  }
+
+
+  function clearPlusMinusTimeout()
+  {
+    if (_this.plusMinusTimeout) {
+      clearTimeout(_this.plusMinusTimeout);
+      _this.plusMinusTimeout = null;
+      _this.plusMinusInterval = 300;
+    }
+  }
+  function handlePlusMinus(inputElement, isIncrement)
+  {
+    if (isIncrement && inputElement.val() !== inputElement.attr('max')) {
+      inputElement.val(parseInt(inputElement.val(), 10) + 1);
+    }
+    else if (!isIncrement && inputElement.val() !== inputElement.attr('min')) {
+      inputElement.val(parseInt(inputElement.val(), 10) - 1);
+    }
+
+    _this.plusMinusInterval = 0.9 * _this.plusMinusInterval;
+    _this.plusMinusInterval = (_this.plusMinusInterval < 1000/60) ? 1000/60 : _this.plusMinusInterval;
+    _this.plusMinusTimeout = setTimeout(function() {handlePlusMinus(inputElement, isIncrement);}, _this.plusMinusInterval);
+  }
 
   this.init = function() {
     _this.waveform = new Waveform(_this.audioCtx);
@@ -112,6 +137,32 @@ function Synth() {
 
       this.harmSliders.push(x);
     }
+
+    // Register the plus/minus onclicks
+    $("#bpm-minus").on('mousedown', function() {
+      _this.plusMinusTimeout = setTimeout(function() {handlePlusMinus($("#bpm-value"), false);}, _this.plusMinusInterval);
+    }).on('mouseup mouseleave', function() {
+      clearPlusMinusTimeout();
+    });
+    $("#bpm-plus").on('mousedown', function() {
+      _this.plusMinusTimeout = setTimeout(function() {handlePlusMinus($("#bpm-value"), true);}, _this.plusMinusInterval);
+    }).on('mouseup mouseleave', function() {
+      clearPlusMinusTimeout();
+    });
+
+    $("#timer-minus").on('mousedown', function() {
+      _this.plusMinusTimeout = setTimeout(function() {handlePlusMinus($("#timer-value"), false);}, _this.plusMinusInterval);
+    }).on('mouseup mouseleave', function() {
+      clearPlusMinusTimeout();
+    });
+    $("#timer-plus").on('mousedown', function() {
+      _this.plusMinusTimeout = setTimeout(function() {handlePlusMinus($("#timer-value"), true);}, _this.plusMinusInterval);
+    }).on('mouseup mouseleave', function() {
+      clearPlusMinusTimeout();
+    });
+
+    // Make sure toggle switches don't save their value
+    $(".toggle-switch-checkbox").prop('checked', false);
   };
 
   this.updateFundFreq = function(fundFreq, fromLeap=false) {
@@ -221,6 +272,7 @@ function Synth() {
   }
 
   this.toggle = function() {
+    $("#toggle-synth").toggleClass('active');
     this.playing ? this.stop() : this.start();
     this.playing = !this.playing;
 
@@ -233,6 +285,9 @@ function Synth() {
   this.toggleRecordingCallback = function() {
     if (this.playing)
     {
+      // Make record button toggled
+      $("#toggle-recording").toggleClass('active');
+      // Start recording (after timer if active)
       if (!this.recording && document.getElementById("timer-on").checked)
       {
         $('#toggle-recording').prop('disabled', true);
@@ -253,6 +308,13 @@ function Synth() {
   this.toggleMetronome = function() {
     this.playMetronome ? this.metronome.stop() : this.metronome.start();
     this.playMetronome = !this.playMetronome;
+    $("#metronome-checkbox").prop('checked', _this.playMetronome);
+  };
+
+  // Create callback just to allow UI changes with leapmotion
+  this.toggleTimer = function()
+  {
+    $("#timer-on").prop('checked', !$("#timer-on").prop('checked'));
   };
 
   this.toggleDistortion = function() {

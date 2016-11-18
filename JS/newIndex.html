@@ -6,6 +6,7 @@
       <title>Mocha: Motion Composer</title>
       <meta name="author" content="The Mocha Team" />
       <script src="https://js.leapmotion.com/leap-0.6.4.js"></script>
+      <script src="https://use.fontawesome.com/acd38c8585.js"></script>
       <script src="waveform.js"></script>
       <script src="metronome.js"></script>
       <script src="synth.js"></script>
@@ -44,21 +45,37 @@
 
           <canvas id="trackCanvas" class="mocha-canvas" width="862px" height="267px"></canvas>
 
-          <button onClick="synthesizer.toggle()" class="btn btn-mocha btn-centerThree" data-toggle="button">Toggle Synth</button>
+          <button id="toggle-synth" onClick="synthesizer.toggle()" class="btn btn-mocha btn-centerThree">Toggle Synth</button>
           <button id="toggle-recording" onClick="synthesizer.toggleRecordingCallback()" class="btn btn-mocha btn-centerThree">Toggle Recording</button>
           <button onClick="synthesizer.playback()" class="btn btn-mocha btn-centerThree">Playback Recording</button>
 
           <canvas id="waveformCanvas" class="mocha-canvas" width="862px" height="100px"></canvas>
 
           <label class="bpm-timer-label">BPM:</label>
-          <input type="number" class="bpm-timer-input" value="60" min="20" max="300" id="bpm-value" style="color: black"/>
-          <button onclick="synthesizer.toggleMetronome()" class="btn btn-mocha btn-mocha-bottom" data-toggle="button">Toggle Metronome</button>
+          <span class="number-field">
+            <i id="bpm-minus" class="fa fa-minus plus-minus"></i>
+            <input type="number" class="bpm-timer-input" value="60" min="20" max="300" id="bpm-value"/>
+            <i id="bpm-plus" class="fa fa-plus plus-minus"></i>
+          </span>
+          <label class="switch">
+            <input id="metronome-checkbox" class="toggle-switch-checkbox" disabled="disabled" type="checkbox">
+            <div class="slider round" onclick="synthesizer.toggleMetronome()"></div>
+          </label>
+          <!-- <button onclick="synthesizer.toggleMetronome()" class="btn btn-mocha btn-mocha-bottom" data-toggle="button">Toggle Metronome</button> -->
 
           <br>
 
           <label class="bpm-timer-label">Timer: </label>
-          <input type="number" class="bpm-timer-input" value="10" id="timer-value" min="0" max="20" style="color: black"/>
-          <input type="checkbox" id="timer-on" /> On?
+          <span class="number-field">
+            <i id="timer-minus" class="fa fa-minus plus-minus"></i>
+            <input type="number" class="bpm-timer-input" value="10" id="timer-value" min="0" max="20" style="color: black"/>
+            <i id="timer-plus" class="fa fa-plus plus-minus"></i>
+          </span>
+          <label class="switch">
+            <input id="timer-on" class="toggle-switch-checkbox" disabled="disabled" type="checkbox">
+            <div class="slider round" onclick="synthesizer.toggleTimer()"></div>
+          </label>
+          <!-- <input type="checkbox" id="timer-on" style="display:none" /> -->
 
           <br>
           <br>

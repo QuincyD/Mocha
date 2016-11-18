@@ -1,9 +1,11 @@
 :root {
   --main-color: #e0e0e0;
-  --canvas-color: rgb(252, 252, 252);
+  --canvas-color: rgb(250, 250, 250);
   --button-color: #1976d2;
   --button-text-color: rgba(255, 255, 255, .95);
   --button-text-focus-color: #280f00;
+  --number-field-color: rgb(252, 252, 252);
+  --number-field-height: 50px;
 }
 
 #mega {
@@ -72,19 +74,21 @@ input[type=range]::-moz-range-thumb {
   font-size: 24px;
   width: 200px;
   height: 50px;
+  transition: color 0.1s;
 }
 
 .btn-mocha:focus {
   color: var(--button-text-color);
 }
-.btn-mocha:hover {
-  filter: brightness(120%);
-  color: var(--button-text-focus-color);
-}
 .btn-mocha:active,
 .btn-mocha.active {
   color: var(--button-text-color);
-  opacity: .8;
+  filter: brightness(90%);
+  opacity: .7;
+}
+.btn-mocha:hover {
+  filter: brightness(130%);
+  color: var(--button-text-focus-color);
 }
 
 .btn-centerThree {
@@ -116,11 +120,34 @@ input[type=range]::-moz-range-thumb {
   font-size: 40px;
 }
 
-.bpm-timer-input {
+/*.bpm-timer-input {
   width: 200px;
   height: 90px;
   font-size: 60px;
   text-align: right;
+}*/
+
+.plus-minus {
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.plus-minus:hover { color: #00fae3; }
+
+input[type=number] {
+  -moz-appearance:textfield;
+  width: 80px;
+  border: 0px solid;
+  text-align: center;
+  padding: 4px;
+}
+
+.number-field {
+  background: var(--number-field-color);
+  color: #222;
+  height: var(--number-field-height);
+  font-size: 40px;
+  padding: 5px;
+  margin-right: 20px;
 }
 
 .import-mocha {
@@ -146,6 +173,69 @@ input[type=range]::-moz-range-thumb {
 .cursorClick {
   background: green;
 }
+
+/*-------------------------------TOGGLE SWITCH CSS ---------------------------------*/
+/*TOGGLE SWITCH CSS - From: http://www.w3schools.com/howto/howto_css_switch.asp*/
+/* The switch - the box around the slider */
+.switch {
+ position: relative;
+ display: inline-block;
+ width: 60px;
+ height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {display:none;}
+
+/* The slider */
+.slider {
+ position: absolute;
+ cursor: pointer;
+ top: 0;
+ left: 0;
+ right: 0;
+ bottom: 0;
+ background-color: #ccc;
+ -webkit-transition: .4s;
+ transition: .4s;
+}
+
+.slider:before {
+ position: absolute;
+ content: "";
+ height: 26px;
+ width: 26px;
+ left: 4px;
+ bottom: 4px;
+ background-color: white;
+ -webkit-transition: .4s;
+ transition: .4s;
+}
+
+input:checked + .slider {
+ background-color: #2196F3;
+}
+
+input:focus + .slider {
+ box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+ -webkit-transform: translateX(26px);
+ -ms-transform: translateX(26px);
+ transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+ border-radius: 34px;
+}
+
+.slider.round:before {
+ border-radius: 50%;
+}
+
+/*------------------------------ END TOGGLE -------------------------------------------*/
 
 /* adapted from:
 http://stackoverflow.com/questions/32976961/how-do-you-add-a-bootstrap-icon-to-an-canvas-using-javascript-if-there-is-a-wa */
