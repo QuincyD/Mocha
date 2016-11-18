@@ -1,5 +1,14 @@
+:root {
+  --background-color: #282c34;
+  --font-color: #ffffff;
+  --button-color: #44e8ff;
+  --button-hover-color: #000000;
+  --button-font-size: 18px;
+}
+
 #mega {
-  width: 98%;
+  width: 95%;
+  margin-left: 30px;
 }
 
 h1 {
@@ -11,17 +20,12 @@ body {
   font: 24px sans-serif;
   border-left: thick double #282c34;
   border-left-width: 10px;
-  color: #00cccc;
-  background-color: #282c34;
+  color: var(--font-color);
+  background-color: var(--background-color);
 }
 
-#can {
-  color: #280f00;
-  background-color: #fff0cd;
-  border-radius: 10px;
-}
 
-.track-canvas {
+.mocha-canvas {
 	background-color: #fff0cd;
 }
 
@@ -47,22 +51,84 @@ input[type=range]::-moz-range-thumb {
   cursor: pointer;
 }
 
+.left-div {
+  margin-right: 0px;
+  padding-right: 0px;
+}
+
+
+.right-div {
+  padding-top: 10px;
+  margin-left: -20px;
+  background-color: #ffffff;
+  border-radius: 20px;
+  border: 1px solid black;
+}
+
 .btn-mocha {
   color: #280f00;
-  background-color: #fff0cd;
-  border-color: #55ffff;
-  font-size: 24px;
+  background-color: var(--button-color);
+  font-size: var(--button-font-size);
+  width: 200px;
+  height: 50px;
 }
+
+.btn-centerThree {
+  margin-left: 1px;
+  margin-right: -2px;
+  margin-bottom: 6px;
+  height: 120px;
+  width: 283px;
+}
+
+.btn-mocha-right {
+  height: 80px;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.btn-mocha-bottom {
+  margin-bottom: 30px;
+  height: 90px;
+  width: 520px;
+}
+
+.threeButtons {
+  margin-left: -1px;
+}
+
+.bpm-timer-label {
+  width: 130px;
+  font-size: 40px;
+}
+
+.bpm-timer-input {
+  width: 200px;
+  height: 90px;
+  font-size: 60px;
+  text-align: right;
+}
+
+.import-mocha {
+  width:1px;
+  height:1px;
+  opacity: 0;
+}
+
+.hiddenP {
+  opacity: 0;
+}
+
 .btn-mocha:hover {
   color: #280f00;
-  background-color: #55ffff;
+  background-color: var(--button-hover-color);
   border-color: #fff0cd;
 }
 .btn-mocha:focus,
 .btn-mocha:active,
 .btn-mocha.active {
   color: #280f00;
-  background-color: #ddf2ed;
+  background-color: var(--button-hover-color);
   border-color: #55efef;
 }
 .btn-mocha.disabled:hover,
@@ -78,7 +144,7 @@ fieldset[disabled] ..btn-mocha:focus,
 fieldset[disabled] ..btn-mocha:active,
 fieldset[disabled] ..btn-mocha.active {
   color: #280f00;
-  background-color: #fff0cd;
+  background-color: var(--button-hover-color);
   border-color: #fff0cd;
 }
 

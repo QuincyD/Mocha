@@ -44,7 +44,7 @@ body {
             <br />
             <div class="row">
                 <div class="col-md-8">
-                
+
                     <h1>M<small>OCHA</small>: M<small>OTION</small> C<small>OMPOSER</small></h1>
 
                 </div>
@@ -67,33 +67,17 @@ body {
 
                         <div class="col-md-8">
 
-                            <canvas id="trackCanvas" class="track-canvas" width="1000px" height="300px"></canvas>
+                            <canvas id="trackCanvas" class="track-canvas" width="852px" height="267px"></canvas>
 
                         </div>
 
                     </div>
-                    
-                    <div class="row">
 
-                        <br />
+                    <div class="row threeButtons">
 
-                        <div class='col-md-2 col-md-push-1'>
-
-                            <button onClick="synthesizer.toggle()" class="btn btn-mocha" data-toggle="button">Toggle Synth</button>
-
-                        </div>
-
-                        <div class="col-md-2 col-md-push-2">
-
-                            <button id="toggle-recording" onClick="synthesizer.toggleRecordingCallback()" class="btn btn-mocha">Toggle Recording</button>
-
-                        </div>
-
-                        <div class="col-md-2 col-md-push-3">
-
-                            <button onClick="synthesizer.playback()" class="btn btn-mocha">Playback Recording</button>
-
-                        </div>
+                            <button onClick="synthesizer.toggle()" class="btn btn-mocha btn-centerThree" data-toggle="button">Toggle Synth</button>
+                            <button id="toggle-recording" onClick="synthesizer.toggleRecordingCallback()" class="btn btn-mocha btn-centerThree">Toggle Recording</button>
+                            <button onClick="synthesizer.playback()" class="btn btn-mocha btn-centerThree">Playback Recording</button>
 
                     </div>
 
@@ -103,7 +87,7 @@ body {
 
                         <div class="col-md-8">
 
-                            <canvas id="can" width="1000px" height="100px"></canvas>
+                            <canvas id="waveformCanvas" width="852" height="100px"></canvas>
 
                         </div>
 
@@ -141,27 +125,6 @@ body {
 
                     </div>
 
-                    <script type="text/javaScript">
-
-                        width = screen.width - 25;
-                        height = screen.height - 200;
-
-                        trackWidth = width * (2/3);
-                        trackHeight = (height/2) * (3/4)
-
-                        canWidth = trackWidth;
-                        canHeight = (height/2) * (1/4)
-                        
-                        track = document.getElementById("trackCanvas");
-                        track.width = trackWidth;
-                        track.height = trackHeight;
-
-                        wave = document.getElementById("can");
-                        wave.width = canWidth;
-                        wave.height = canHeight;
-
-                    </script>
-                    
                 </div>
 
                 <div class="col-md-3">
@@ -183,7 +146,7 @@ body {
                         <input id="detune-slider" type="range"  min="0" max="100" value="0" oninput="synthesizer.detune(this.value)" style="margin-left: 25px"/>
 
                     </div>
-                    
+
                     <div class="row">
 
                         <br />
