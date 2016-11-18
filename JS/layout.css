@@ -1,9 +1,9 @@
 :root {
-  --background-color: #282c34;
-  --font-color: #ffffff;
-  --button-color: #44e8ff;
-  --button-hover-color: #000000;
-  --button-font-size: 18px;
+  --main-color: #263238;
+  --canvas-color: #bddad7;
+  --button-color: #1976d2;
+  --button-text-color: rgba(255, 255, 255, .95);
+  --button-text-focus-color: #280f00;
 }
 
 #mega {
@@ -12,21 +12,26 @@
 }
 
 h1 {
-  border-left: thick double #282c34;
+  border-left: thick double var(--main-color);
   border-left-width: 20px;
 }
 
 body {
   font: 24px sans-serif;
-  border-left: thick double #282c34;
+  border-left: thick double var(--main-color);
   border-left-width: 10px;
-  color: var(--font-color);
-  background-color: var(--background-color);
+  color: #00cccc;
+  /*background-color: #282c34*/
+  background-color: var(--main-color);
 }
 
+#can {
+  color: #280f00;
+  border-radius: 10px;
+}
 
-.mocha-canvas {
-	background-color: #fff0cd;
+.track-canvas {
+	background-color: var(--canvas-color);
 }
 
 .tuning-div {
@@ -66,9 +71,10 @@ input[type=range]::-moz-range-thumb {
 }
 
 .btn-mocha {
-  color: #280f00;
+  color: var(--button-text-color);
   background-color: var(--button-color);
-  font-size: var(--button-font-size);
+  opacity: 1;
+  font-size: 24px;
   width: 200px;
   height: 50px;
 }
@@ -120,33 +126,18 @@ input[type=range]::-moz-range-thumb {
 }
 
 .btn-mocha:hover {
-  color: #280f00;
-  background-color: var(--button-hover-color);
-  border-color: #fff0cd;
+  filter: brightness(120%);
+  color: var(--button-text-focus-color);
 }
-.btn-mocha:focus,
 .btn-mocha:active,
 .btn-mocha.active {
-  color: #280f00;
-  background-color: var(--button-hover-color);
-  border-color: #55efef;
+  color: var(--button-text-color);
+  opacity: .8;
 }
-.btn-mocha.disabled:hover,
-.btn-mocha.disabled:focus,
-.btn-mocha.disabled:active,
-.btn-mocha.disabled.active,
-.btn-mocha[disabled]:hover,
-.btn-mocha[disabled]:focus,
-.btn-mocha[disabled]:active,
-.btn-mocha[disabled].active,
-fieldset[disabled] .btn-mocha:hover,
-fieldset[disabled] ..btn-mocha:focus,
-fieldset[disabled] ..btn-mocha:active,
-fieldset[disabled] ..btn-mocha.active {
-  color: #280f00;
-  background-color: var(--button-hover-color);
-  border-color: #fff0cd;
+.btn-mocha:focus {
+  color: var(--button-text-color);
 }
+
 
 .circleBase {
   border-radius: 50%;

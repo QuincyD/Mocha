@@ -39,7 +39,6 @@ var LeapCursor = (function() {
 
 function LeapMotion() {
   //Variables for the function
-  var output = document.getElementById('output');   //TODO @Joe is this needed?
   var freq = null;
 
   //Variables specific to the Leap Motion functionality
