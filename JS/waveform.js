@@ -3,7 +3,7 @@ function Waveform(audioContext) {
   this.audioCtx = audioContext;
   this.analyser = this.audioCtx.createAnalyser();
 
-  var canvas = document.getElementById("can");
+  var canvas = document.getElementById("waveformCanvas");
   var canvasCtx = canvas.getContext("2d");
 
 
