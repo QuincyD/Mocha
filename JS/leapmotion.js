@@ -141,7 +141,11 @@ function LeapMotion() {
             return;
           }
 
-          clickEle = document.elementFromPoint(cursorPos[0], cursorPos[1]);
+          if (synthesizer.recording) {
+            clickEle = document.getElementById("toggle-recording");
+          } else {
+            clickEle = document.elementFromPoint(cursorPos[0], cursorPos[1]);
+          }
 
           var evt = new MouseEvent("mousedown", {
             buttons: 0,
