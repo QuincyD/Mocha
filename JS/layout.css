@@ -61,6 +61,9 @@ input[type=range]::-moz-range-thumb {
   opacity: 1;
   font-size: 24px;
 }
+.btn-mocha:focus {
+  color: var(--button-text-color);
+}
 .btn-mocha:hover {
   filter: brightness(120%);
   color: var(--button-text-focus-color);
@@ -69,9 +72,6 @@ input[type=range]::-moz-range-thumb {
 .btn-mocha.active {
   color: var(--button-text-color);
   opacity: .8;
-}
-.btn-mocha:focus {
-  color: var(--button-text-color);
 }
 
 
