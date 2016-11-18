@@ -24,29 +24,29 @@ function Synth() {
   }
 
   function sliderMouseDown(i) {
-    return function() {
-      vertSliderMouseDown();
+    return function(evt) {
+      vertSliderMouseDown(evt);
       synthesizer.changeHarmVol(this.value, i);
     };
   }
 
   function sliderMouseUp(i) {
-    return function() {
-      vertSliderMouseUp();
+    return function(evt) {
+      vertSliderMouseUp(evt);
       synthesizer.changeHarmVol(this.value, i);
     };
   }
 
   function sliderMouseClick(i) {
-    return function() {
-      vertSliderMouseClick();
+    return function(evt) {
+      vertSliderMouseClick(evt);
       synthesizer.changeHarmVol(this.value, i);
     };
   }
 
   function sliderMouseMove(i) {
-    return function() {
-      vertSliderMouseMove();
+    return function(evt) {
+      vertSliderMouseMove(evt);
       synthesizer.changeHarmVol(this.value, i);
     };
   }
