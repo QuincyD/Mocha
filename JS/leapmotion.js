@@ -147,6 +147,8 @@ function LeapMotion() {
             clickEle = document.elementFromPoint(cursorPos[0], cursorPos[1]);
           }
 
+          console.log(clickEle);
+
           var evt = new MouseEvent("mousedown", {
             buttons: 0,
             view: window,

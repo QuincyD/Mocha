@@ -318,6 +318,7 @@ function Synth() {
   };
 
   this.toggleDistortion = function() {
+    $("#toggle-distortion").toggleClass('active');
     this.isDistortion = !this.isDistortion;
   };
 
