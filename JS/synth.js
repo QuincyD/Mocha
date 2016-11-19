@@ -6,7 +6,7 @@ function Synth() {
   this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
   this.minFreq = 150;
-  this.maxFreq = 650;
+  this.maxFreq = 587;
   this.maxAmp = 0.75;
   this.numHarm = 3;
   this.harmOscillators = [];

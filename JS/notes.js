@@ -1,7 +1,8 @@
 var color1 = 'rgb(40, 44, 52)'; // background color: gray
 var color2 = '#009999'; // font color: pure blue
 var color3 = 'rgb(255, 0, 0)'; // accent color: pure red
-var indicatorColor = "rgb(27, 182, 27)";
+// var indicatorColor = "rgb(27, 182, 27)";
+var indicatorColor = "rgb(235, 76, 76)";
 
 
 var notes = [];
@@ -34,7 +35,6 @@ for (i = -57,j = 0; i < 51; i++, j++) {
 
 //Returns the closest note to the given frequency and the normalized distance
 function getNote(frequency) {
-
 	if(frequency < 16.35) {
 		// console.log('Below lowest frequency!');
 		return ['C0', (16.35 - frequency)/16.35];
