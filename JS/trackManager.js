@@ -667,7 +667,7 @@ function TrackManager() {
     this.ctx.beginPath();
     this.ctx.globalAlpha = thisTrack.opacity;
     this.ctx.rect(thisTrack.x, thisTrack.y, thisTrack.w, thisTrack.h);
-    this.ctx.fillStyle = 'yellow';
+    this.ctx.fillStyle = '#0d47a1';
     this.ctx.fill();
     this.ctx.lineWidth = 2;
     this.ctx.strokeStyle = 'black';
@@ -685,11 +685,12 @@ function TrackManager() {
     this.ctx.textAlign = 'center';
     this.ctx.textBaseline = 'middle';
 
-    this.ctx.font = "30px glyphicon";
-    this.ctx.fillStyle = 'red';
+    this.ctx.font = "25px glyphicon";
+    this.ctx.fillStyle = 'black';
     this.ctx.fillText(String.fromCharCode(0xe020), leftButtonX, buttonY);
 
     this.ctx.fillStyle = 'black';
+    this.ctx.font = "32px glyphicon"
     if (thisTrack.muted) {
       this.ctx.fillText(String.fromCharCode(0xe038), rightButtonX, buttonY);
     } else {

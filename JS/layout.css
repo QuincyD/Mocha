@@ -1,9 +1,11 @@
 :root {
-  --main-color: #e0e0e0;
+  --main-color: rgb(224, 224, 224);
   --canvas-color: rgb(250, 250, 250);
-  --button-color: #1976d2;
+  --right-div-color: rgb(244, 244, 244);
+  --button-color: rgb(25, 118, 210);
+  --slider-color: rgb(230, 250, 255);
   --button-text-color: rgba(255, 255, 255, .95);
-  --button-text-focus-color: #280f00;
+  --button-text-focus-color: rgb(40, 15, 0);
   --number-field-color: rgb(252, 252, 252);
   --number-field-height: 50px;
 }
@@ -45,11 +47,11 @@ body {
 /* All the same stuff for Firefox */
 input[type=range]::-moz-range-thumb {
   box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-  border: 1px solid #55ffff;
+  border: 1px solid #000000;
   height: 30px;
   width: 60px;
   border-radius: 3px;
-  background: #fff0cd;
+  background: var(--slider-color);
   cursor: pointer;
 }
 
@@ -62,7 +64,7 @@ input[type=range]::-moz-range-thumb {
 .right-div {
   padding-top: 10px;
   margin-left: -20px;
-  background-color: #ffffff;
+  background-color: var(--right-div-color);
   border-radius: 20px;
   border: 1px solid black;
 }
@@ -116,7 +118,7 @@ input[type=range]::-moz-range-thumb {
 }
 
 .bpm-timer-label {
-  width: 130px;
+  width: 370px;
   font-size: 40px;
 }
 

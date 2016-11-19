@@ -1,6 +1,7 @@
 var color1 = 'rgb(40, 44, 52)'; // background color: gray
 var color2 = '#009999'; // font color: pure blue
 var color3 = 'rgb(255, 0, 0)'; // accent color: pure red
+var indicatorColor = "rgb(27, 182, 27)";
 
 
 var notes = [];
@@ -159,7 +160,7 @@ function tunerView2(frequency) {
     	minusFreq = false
     }
     var amountIndicator = Math.abs(normFreq)*10
-    var indicatorColor = "rgb(0, 255, 0)";
+
 
     //draw range labels
     var threshold = 0.5;

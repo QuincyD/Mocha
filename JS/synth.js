@@ -140,23 +140,23 @@ function Synth() {
 
     // Register the plus/minus onclicks
     $("#bpm-minus").on('mousedown', function() {
-      _this.plusMinusTimeout = setTimeout(function() {handlePlusMinus($("#bpm-value"), false);}, _this.plusMinusInterval);
+      handlePlusMinus($("#bpm-value"));
     }).on('mouseup mouseleave', function() {
       clearPlusMinusTimeout();
     });
     $("#bpm-plus").on('mousedown', function() {
-      _this.plusMinusTimeout = setTimeout(function() {handlePlusMinus($("#bpm-value"), true);}, _this.plusMinusInterval);
+      handlePlusMinus($("#bpm-value"), true);
     }).on('mouseup mouseleave', function() {
       clearPlusMinusTimeout();
     });
 
     $("#timer-minus").on('mousedown', function() {
-      _this.plusMinusTimeout = setTimeout(function() {handlePlusMinus($("#timer-value"), false);}, _this.plusMinusInterval);
+      handlePlusMinus($("#timer-value"), false);
     }).on('mouseup mouseleave', function() {
       clearPlusMinusTimeout();
     });
     $("#timer-plus").on('mousedown', function() {
-      _this.plusMinusTimeout = setTimeout(function() {handlePlusMinus($("#timer-value"), true);}, _this.plusMinusInterval);
+      handlePlusMinus($("#timer-value"), true);
     }).on('mouseup mouseleave', function() {
       clearPlusMinusTimeout();
     });
