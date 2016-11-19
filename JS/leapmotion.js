@@ -60,6 +60,31 @@ function LeapMotion() {
     synthesizer.changeVolume(0, true);
   };
 
+  function validateNorm(normalized) {
+    // Ensuring the normalized position stays between 0 and 1
+    if (normalized[0] < 0) {
+      normalized[0] = 0;
+    } else if (normalized[0] > 1) {
+      normalized[0] = 1;
+    }
+
+    if (normalized[1] < 0) {
+      normalized[1] = 0;
+    } else if (normalized[1] > 1) {
+      normalized[1] = 1;
+    }
+
+    if (normalized[2] < 0) {
+      normalized[2] = 0;
+    }
+
+    if (normalized[2] > 1) {
+      normalized[2] = 1;
+    }
+
+    return normalized;
+  };
+
   // see Controller documentation for option details
   my_controller.on('connect', function() {
     setInterval(function() {
@@ -110,6 +135,8 @@ function LeapMotion() {
       //Ensuring that a hand exists with a position
       if (hand) {
         normalized = interactionBox.normalizePoint(hand.palmPosition);
+        normalized = validateNorm(normalized);
+        console.log(normalized);
 
         //Updating sound
         freq = synthesizer.minFreq + normalized[0] * (synthesizer.maxFreq - synthesizer.minFreq);
