@@ -136,7 +136,6 @@ function LeapMotion() {
       if (hand) {
         normalized = interactionBox.normalizePoint(hand.palmPosition);
         normalized = validateNorm(normalized);
-        console.log(normalized);
 
         //Updating sound
         freq = synthesizer.minFreq + normalized[0] * (synthesizer.maxFreq - synthesizer.minFreq);
