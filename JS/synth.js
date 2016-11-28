@@ -122,9 +122,9 @@ function Synth() {
       x.setAttribute('orient','vertical');
       x.setAttribute('class', 'harmonic-slider');
       x.min = "0";
-      x.max = ".5";
-      x.step = ".01";
-      x.value = ".1";
+      x.max = "0.5";
+      x.step = "0.01";
+      x.value = "0.1";
       x.oninput = createOnInput(i);
       x.onmousedown = sliderMouseDown(i);
       x.onmouseup = sliderMouseUp(i);
