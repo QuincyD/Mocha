@@ -2,179 +2,131 @@
 
 <html lang="en">
     <head>
-        <meta charset="utf-8" />
-        <title>Mocha: Motion Composer</title>
-        <meta name="author" content="The Mocha Team" />
-        <script src="https://js.leapmotion.com/leap-0.6.4.js"></script>
-        <script src="waveform.js"></script>
-        <script src="metronome.js"></script>
-        <script src="synth.js"></script>
-        <script src="trackManager.js"></script>
-        <script src="recorder.js"></script>
-        <script src="leapmotion.js"></script>
-        <script src="main.js"></script>
-        <script src="sliders.js"></script>
-        <script src="notes.js"></script>
+      <meta charset="utf-8" />
+      <title>Mocha: Motion Composer</title>
+      <meta name="author" content="The Mocha Team" />
+      <script src="https://js.leapmotion.com/leap-0.6.4.js"></script>
+      <script src="https://use.fontawesome.com/acd38c8585.js"></script>
+      <script src="waveform.js"></script>
+      <script src="metronome.js"></script>
+      <script src="synth.js"></script>
+      <script src="trackManager.js"></script>
+      <script src="recorder.js"></script>
+      <script src="leapmotion.js"></script>
+      <script src="main.js"></script>
+      <script src="sliders.js"></script>
+      <script src="notes.js"></script>
 
-    <!-- Bootstrap -->
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+      <!-- Bootstrap -->
+      <!-- Latest compiled and minified CSS -->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+      <!-- Optional theme -->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+      <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+      <script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+      <!-- Include all compiled plugins (below), or include individual files as needed -->
+      <script src = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 
-    <!--CSS stylesheet-->
-    <link rel="stylesheet" type="text/css" href="layout.css">
-<!--
-<style>
-body {
-    background-color: #fff0cd;
-}
-</style>-->
+      <!--CSS stylesheet-->
+      <link rel="stylesheet" type="text/css" href="layout.css">
     </head>
-    <!-- New Body -->
+
     <body>
-        <div id="mega" class="containter">
-            <br />
-            <div class="row">
-                <div class="col-md-8">
 
-                    <h1>M<small>OCHA</small>: M<small>OTION</small> C<small>OMPOSER</small></h1>
+      <div class="outermost-div">
+        <div class="col-md-12">
+          <h1>M<small>OCHA:</small> M<small>OTION</small> C<small>OMPOSER</small></h1>
+        </div>
 
-                </div>
+        <div class="col-md-8 left-div">
 
-                <div class="col-md-1" style="margin-top: 15px">
+          <canvas id="trackCanvas" class="mocha-canvas" width="862px" height="267px"></canvas>
 
-                    <input type="file" id="file-import" class="btn btn-mocha"></input>
+          <button id="toggle-synth" onClick="synthesizer.toggle()" class="btn btn-mocha btn-centerThree">Toggle Synth</button>
+          <button id="toggle-recording" onClick="synthesizer.toggleRecordingCallback()" class="btn btn-mocha btn-centerThree">Toggle Recording</button>
+          <button onClick="synthesizer.playback()" class="btn btn-mocha btn-centerThree">Playback Recording</button>
 
-                </div>
+          <canvas id="waveformCanvas" class="mocha-canvas" width="862px" height="100px"></canvas>
 
-            </div>
+          <label class="bpm-timer-label">Metronome:</label>
+          <span class="number-field">
+            <i id="bpm-minus" class="fa fa-minus plus-minus"></i>
+            <input type="number" class="bpm-timer-input" value="60" min="20" max="300" id="bpm-value"/>
+            <i id="bpm-plus" class="fa fa-plus plus-minus"></i>
+          </span>
+          <label class="switch">
+            <input id="metronome-checkbox" class="toggle-switch-checkbox" disabled="disabled" type="checkbox">
+            <div class="slider round" onclick="synthesizer.toggleMetronome()"></div>
+          </label>
+          <!-- <button onclick="synthesizer.toggleMetronome()" class="btn btn-mocha btn-mocha-bottom" data-toggle="button">Toggle Metronome</button> -->
 
-            <div class="row">
+          <br>
 
-                <br />
+          <label class="bpm-timer-label">Lead-In Time: </label>
+          <span class="number-field">
+            <i id="timer-minus" class="fa fa-minus plus-minus"></i>
+            <input type="number" class="bpm-timer-input" value="10" id="timer-value" min="0" max="20" style="color: black"/>
+            <i id="timer-plus" class="fa fa-plus plus-minus"></i>
+          </span>
+          <label class="switch">
+            <input id="timer-on" class="toggle-switch-checkbox" disabled="disabled" type="checkbox">
+            <div class="slider round" onclick="synthesizer.toggleTimer()"></div>
+          </label>
+          <!-- <input type="checkbox" id="timer-on" style="display:none" /> -->
 
-                <div class="col-md-8">
+          <br>
+          <br>
 
-                    <div class="row">
-
-                        <div class="col-md-8">
-
-                            <canvas id="trackCanvas" class="track-canvas" width="852px" height="267px"></canvas>
-
-                        </div>
-
-                    </div>
-
-                    <div class="row threeButtons">
-
-                            <button onClick="synthesizer.toggle()" class="btn btn-mocha btn-centerThree" data-toggle="button">Toggle Synth</button>
-                            <button id="toggle-recording" onClick="synthesizer.toggleRecordingCallback()" class="btn btn-mocha btn-centerThree">Toggle Recording</button>
-                            <button onClick="synthesizer.playback()" class="btn btn-mocha btn-centerThree">Playback Recording</button>
-
-                    </div>
-
-                    <div class="row">
-
-                        <br />
-
-                        <div class="col-md-8">
-
-                            <canvas id="waveformCanvas" width="852" height="100px"></canvas>
-
-                        </div>
-
-                    </div>
-
-                    <br />
-
-                    <div class="row">
-
-                        <div class='col-md-8 col-md-push-2'>
-
-                            <label>BPM:  </label>
-                            <input type="number" value="60" min="20" max="300" id="bpm-value" style="color: black"/>
-                            <button onclick="synthesizer.toggleMetronome()" class="btn btn-mocha" data-toggle="button">Toggle Metronome</button>
-
-                            <br /><br />
-
-                            <label>Timer: </label>
-                            <input type="number" value="10" id="timer-value" min="0" max="20" style="color: black"/>
-                            <input type="checkbox" id="timer-on" /> On?
-
-                        </div>
-
-                    </div>
-
-                    <div class='row'>
-
-                        <br />
-
-                        <div class='col-md-5 col-md-push-2'>
-
-                            <canvas id="tunerCanvas"></canvas>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <div class="col-md-3">
-
-                    <div class="row">
-
-                        <div class="col-md-1 col-md-push-2" style="margin-left: 15px">
-
-                            <button onclick="synthesizer.exportProject()" class="btn btn-mocha">Save Project</button>
-
-                        </div>
-
-                    </div>
-
-                    <br />
-                    <div class="row">
-
-                        <label style="margin-left: 25px">Detune: </label>
-                        <input id="detune-slider" type="range"  min="0" max="100" value="0" oninput="synthesizer.detune(this.value)" style="margin-left: 25px"/>
-
-                    </div>
-
-                    <div class="row">
-
-                        <br />
-
-                        <div class='col-md-2' style="margin-left: 15px">
-
-                            <button onClick="synthesizer.toggleDistortion()" class="btn btn-mocha" data-toggle="button" >Distortion</button>
-
-                        </div>
-
-                    </div>
-
-                    <br />
-
-                    <label style="margin-left: 15px">Harmonic Amplitudes: </label>
-                    <br  />
-                    <div id="harmonicSliders"></div>
-
-                    <br />
-
-                </div>
-
-            </div>
+          <center>
+            <canvas id="tunerCanvas"></canvas>
+          <center>
 
         </div>
 
-        <a id="projectDownload"></a>
+        <div class="col-md-4 right-div">
 
+          <button id="loadBtn" class="btn btn-mocha btn-mocha-right">Load a Project</button>
+          <button onclick="synthesizer.exportProject()" class="btn btn-mocha btn-mocha-right">Save Project</button>
+
+          <br>
+          <br>
+
+          <center>
+            <label>Detune</label>
+          </center>
+          <input id="detune-slider" type="range"  min="0" max="100" value="0" oninput="synthesizer.detune(this.value)"/>
+
+          <br>
+
+          <button id="toggle-distortion" onClick="synthesizer.toggleDistortion()" class="btn btn-mocha btn-mocha-right">Distortion</button>
+
+          <br>
+          <br>
+
+          <center>
+            <label>Harmonic Amplitudes</label>
+          </center>
+          <br>
+          <div id="harmonicSliders"></div>
+
+          <input type="file" id="file-import" class="btn btn-mocha import-mocha"></input>
+
+        </div>
+        <div height="1" width="1" class="hiddenP">
+          <font size="0px" face="glyphicon">&#xe020</font>
+        </div>
+      </div>
+
+      <script>
+        $( document ).ready(function() {
+          $( '#loadBtn' ).click(function() {
+            $( '#file-import' ).click();
+          });
+        });
+      </script>
+      <a id="projectDownload"></a>
     </body>
-
-</html>
+  </html>
