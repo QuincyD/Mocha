@@ -273,13 +273,23 @@ function Synth() {
 
   this.toggle = function() {
     $("#toggle-synth").toggleClass('active');
-    this.playing ? this.stop() : this.start();
-    this.playing = !this.playing;
+    // this.playing ? this.stop() : this.start();
+    if (this.playing) {
+        if (this.recording)
+        {
+          $('#toggle-recording').trigger('click');
+        }
 
-    if (this.recording)
-    {
-      $('#toggle-recording').trigger('click');
+        this.stop();
+        $('#toggle-distortion').prop('disabled', false);
+        $('#toggle-recording').prop('disabled', true);
     }
+    else {
+        this.start();
+        $('#toggle-distortion').prop('disabled', true);
+        $('#toggle-recording').prop('disabled', false);
+    }
+    this.playing = !this.playing;
   };
 
   this.toggleRecordingCallback = function() {

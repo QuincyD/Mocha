@@ -92,6 +92,10 @@ input[type=range]::-moz-range-thumb {
   filter: brightness(130%);
   color: var(--button-text-focus-color);
 }
+.btn-mocha:disabled {
+  filter: brightness(50%);
+  opacity: .5;
+}
 
 .btn-centerThree {
   margin-left: 1px;
