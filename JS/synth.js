@@ -262,6 +262,7 @@ function Synth() {
     {
       $("#timer-value").val(0);
       $('#toggle-recording').prop('disabled', false);
+      $("#toggle-synth").prop('disabled', false);
       _this.timerTimeout = null;
       _this.toggleRecording();
     }
@@ -301,6 +302,7 @@ function Synth() {
       if (!this.recording && document.getElementById("timer-on").checked)
       {
         $('#toggle-recording').prop('disabled', true);
+        $("#toggle-synth").prop('disabled', true);
         this.timer(parseInt($("#timer-value").val(), 10));
       }
       else {

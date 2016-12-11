@@ -51,7 +51,7 @@
 
           <canvas id="waveformCanvas" class="mocha-canvas" width="862px" height="100px"></canvas>
 
-          <button onclick="synthesizer.toggleMetronome()" class="btn btn-mocha btn-mocha-bottom" data-toggle="button">Toggle Metronome</button> 
+          <button onclick="synthesizer.toggleMetronome()" class="btn btn-mocha btn-mocha-bottom" data-toggle="button">Toggle Metronome</button>
           <!--
           <label class="bpm-timer-label">Metronome:</label>
           -->
@@ -66,7 +66,7 @@
             <div class="slider round" onclick="synthesizer.toggleMetronome()"></div>
           </label>
           -->
-           
+
 
           <br>
 
@@ -75,8 +75,8 @@
             <input id="timer-on" type="checkbox">Toggle Lead-In Timer <comment type checkbox comment>
           </label>
           -->
-          
-          <button onclick="synthesizer.toggleTimer()" class="btn btn-mocha btn-mocha-bottom" title="Time before synth starts being recorded after recording is toggled." data-toggle="button"><input id="timer-on" type="checkbox">Toggle Lead-In Timer</button> 
+
+          <button onclick="synthesizer.toggleTimer()" class="btn btn-mocha btn-mocha-bottom" title="Time before synth starts being recorded after recording is toggled." data-toggle="button">Toggle Lead-In Timer</button>
           <!--
           <label class="bpm-timer-label" title="Time before synth starts being recorded after recording is toggled.">Lead-In Time: </label>
           -->
@@ -85,12 +85,13 @@
             <input type="number" class="bpm-timer-input" value="10" id="timer-value" min="0" max="20" style="color: black"/>
             <i id="timer-plus" class="fa fa-plus plus-minus"></i>
           </span>
+          <input id="timer-on" type="checkbox" disabled="disabled" style="display:none" autocomplete="off">
           <!--
           <label class="switch">
             <input id="timer-on" class="toggle-switch-checkbox" disabled="disabled" type="checkbox">
             <div class="slider round" onclick="synthesizer.toggleTimer()"></div>
           </label>
-           <input type="checkbox" id="timer-on" style="display:none" /> 
+           <input type="checkbox" id="timer-on" style="display:none" />
           -->
           <br>
 
@@ -115,7 +116,9 @@
 
           <br>
 
-          <button id="toggle-distortion" onClick="synthesizer.toggleDistortion()" class="btn btn-mocha btn-mocha-right">Distortion</button>
+          <button id="toggle-distortion" onClick="synthesizer.toggleDistortion()" class="btn btn-mocha btn-mocha-right" title="Changes sound type to a distorted wave. Note: synthesizer must be disabled to toggle.">
+              Distortion
+          </button>
 
           <br>
           <br>
