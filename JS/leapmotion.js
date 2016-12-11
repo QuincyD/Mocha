@@ -89,9 +89,12 @@ function LeapMotion() {
     $("#toggle-synth").prop('disabled', true);
   });
 
-  // see Controller documentation for option details
   my_controller.on('deviceStreaming', function() {
     $("#toggle-synth").prop('disabled', false);
+  });
+
+  // see Controller documentation for option details
+  my_controller.on('connect', function() {
     setInterval(function() {
       frame = my_controller.frame();
       hand = null;
