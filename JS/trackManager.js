@@ -375,6 +375,8 @@ function TrackManager() {
       _this.secondsToShow = project.secondsToShow;
       _this.tracksToShow = project.tracksToShow;
       _this.trackList = {};
+      _this.trackLocs = {};
+      _this.trackLocsLen = 0;
 
       // Go through every track that was saved in the json
       for (let i = 0; i < project.tracks.length; i++) {
