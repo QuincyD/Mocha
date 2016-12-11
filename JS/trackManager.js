@@ -670,8 +670,9 @@ function TrackManager() {
     this.ctx.fillStyle = '#0d47a1';
     this.ctx.fill();
     this.ctx.lineWidth = 2;
-    this.ctx.strokeStyle = 'black';
+    //this.ctx.strokeStyle = 'black';
     this.ctx.stroke();
+    this.ctx.closePath();
 
     //Set the global opacity back to 1 for everything else
     this.ctx.globalAlpha = 1;
@@ -685,10 +686,13 @@ function TrackManager() {
     this.ctx.textAlign = 'center';
     this.ctx.textBaseline = 'middle';
 
+    this.ctx.beginPath();
     this.ctx.font = "25px glyphicon";
     this.ctx.fillStyle = 'black';
     this.ctx.fillText(String.fromCharCode(0xe020), leftButtonX, buttonY);
+    this.ctx.closePath();
 
+    this.ctx.beginPath();
     this.ctx.fillStyle = 'black';
     this.ctx.font = "32px glyphicon"
     if (thisTrack.muted) {
@@ -696,6 +700,7 @@ function TrackManager() {
     } else {
       this.ctx.fillText(String.fromCharCode(0xe036), rightButtonX, buttonY);
     }
+    this.ctx.closePath();
   } // end drawTrack()
 
   // Function to mark the Canvas for redrawing
