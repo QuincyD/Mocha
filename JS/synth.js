@@ -270,7 +270,7 @@ function Synth() {
       $("#timer-value").val(timeRemaining - 1);
       _this.timerTimeout = window.setTimeout(_this.timer, 1000, timeRemaining - 1);
     }
-  }
+  };
 
   this.toggle = function() {
     $("#toggle-synth").toggleClass('active');
@@ -315,7 +315,7 @@ function Synth() {
   this.toggleRecording = function() {
     this.recording ? this.recorder.stopRecording() : this.recorder.startRecording();
     this.recording = !this.recording;
-  }
+  };
 
   this.toggleMetronome = function() {
     this.playMetronome ? this.metronome.stop() : this.metronome.start();
@@ -344,5 +344,5 @@ function Synth() {
 
   this.exportProject = function() {
     this.recorder.exportProject();
-  }
+  };
 }
