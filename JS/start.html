@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+    <title>Mocha: Motion Composer</title>
+    <script src="https://use.fontawesome.com/acd38c8585.js"></script>
+
+	<!-- Bootstrap -->
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+	<!-- Include all compiled plugins (below), or include individual files as needed -->
+	<script src = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+
+	<!--CSS stylesheet-->
+	<link rel="stylesheet" type="text/css" href="layout.css">
+
+</head>
+
+<body id="help">
+
+	<h1>M<small>OCHA:</small> M<small>OTION</small> C<small>OMPOSER</small></h1>
+
+	<br>
+
+	<p align="center">Welcome! Before you get started, let's go over some of Mocha's elements.<br>
+	Scroll all the way down to begin.</p>
+
+	<br>
+	<br>
+
+	<img style="border:3px solid rgb(119, 119, 119)" src="MochaScreenshot.png"/>
+	<br>
+	<br>
+	<p>The above image is a screenshot of what you see when you begin Mocha.<p>
+
+	<br>
+
+	<p>At the top and center right of the screenshot, there is a red dot.<br>The dot shows where your hand is with respect to the Leap Motion device that is tracking your hand.<br>Let's talk about the Leap Motion.</p>
+	<br>
+	<br>
+
+	<p> Before you use the Leap Motion, make sure the Leap Motion:
+
+	<ul>
+
+		<li>has all of its Leap Motion drivers installed</li>
+
+		<li>is plugged into the computer and tracking your hand</li>
+
+		<li>is parallel to the screen for more intuitive control</li>
+
+	</ul>
+
+	<br>
+
+	<p>Using the axis in the image below, your hand's position is parsed and given to the Synthesizer to play sounds.<p>
+
+	<br>
+
+	<img style="border:3px solid rgb(119, 119, 119)" id="leap-image" src="Leap_Axes.png"/>
+
+	<p>When the Synthesizer is playing:</p>
+
+	<ul>
+
+		<li>Horizontal movements (x-direction) change the frequency.</li>
+
+		<li>Vertical movements (y-direction) change the amplitude.</li>
+
+		<li>Toward the screen (z-direction) is a click and turns the cursor green.</li>
+
+		<li>Away from the screen (z-direction) is releasing the click and returns the cursor red.</li>
+
+	</ul>
+	
+	<br>
+	<br>
+
+
+
+
+
+	<br>
+	<br>
+
+	<img src="trackManager.png"/>
+
+
+	<br>
+	<br>
+
+
+	<p align="center"> Click begin to start making music </p>
+
+	
+
+
+	<button align="center" class="btn btn-mocha btn-mocha-bottom" onclick="location.href='index.html';">Begin</button>
+
+
+</body>
+
+</html>

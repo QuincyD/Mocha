@@ -6,6 +6,7 @@
   --slider-color: rgb(230, 250, 255);
   --button-text-color: rgba(255, 255, 255, .95);
   --button-text-focus-color: rgb(40, 15, 0);
+  --help-text-color: rgb(119, 119, 119);
   --number-field-color: rgb(252, 252, 252);
   --number-field-height: 50px;
 }
@@ -27,6 +28,15 @@ body {
   color: #00cccc;
   /*background-color: #282c34*/
   background-color: var(--main-color);
+}
+
+p {
+  color: var(--help-text-color);
+}
+
+img {
+    border: 3px solid (--help-text-color);
+    border-radius: 3px;
 }
 
 .mocha-canvas {
