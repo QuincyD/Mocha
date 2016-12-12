@@ -24,87 +24,180 @@
 
 </head>
 
-<body id="help">
+<body>
+	<div align="center">
 
-	<h1>M<small>OCHA:</small> M<small>OTION</small> C<small>OMPOSER</small></h1>
-
-	<br>
-
-	<p align="center">Welcome! Before you get started, let's go over some of Mocha's elements.<br>
-	Scroll all the way down to begin.</p>
-
-	<br>
-	<br>
-
-	<img style="border:3px solid rgb(119, 119, 119)" src="MochaScreenshot.png"/>
-	<br>
-	<br>
-	<p>The above image is a screenshot of what you see when you begin Mocha.<p>
-
-	<br>
-
-	<p>At the top and center right of the screenshot, there is a red dot.<br>The dot shows where your hand is with respect to the Leap Motion device that is tracking your hand.<br>Let's talk about the Leap Motion.</p>
-	<br>
-	<br>
-
-	<p> Before you use the Leap Motion, make sure the Leap Motion:
-
-	<ul>
-
-		<li>has all of its Leap Motion drivers installed</li>
-
-		<li>is plugged into the computer and tracking your hand</li>
-
-		<li>is parallel to the screen for more intuitive control</li>
-
-	</ul>
-
-	<br>
-
-	<p>Using the axis in the image below, your hand's position is parsed and given to the Synthesizer to play sounds.<p>
-
-	<br>
-
-	<img style="border:3px solid rgb(119, 119, 119)" id="leap-image" src="Leap_Axes.png"/>
-
-	<p>When the Synthesizer is playing:</p>
-
-	<ul>
-
-		<li>Horizontal movements (x-direction) change the frequency.</li>
-
-		<li>Vertical movements (y-direction) change the amplitude.</li>
-
-		<li>Toward the screen (z-direction) is a click and turns the cursor green.</li>
-
-		<li>Away from the screen (z-direction) is releasing the click and returns the cursor red.</li>
-
-	</ul>
-	
-	<br>
-	<br>
-
-
-
-
-
-	<br>
-	<br>
-
-	<img src="trackManager.png"/>
-
-
-	<br>
-	<br>
-
-
-	<p align="center"> Click begin to start making music </p>
+		<h2>M<small>OCHA:</small> M<small>OTION</small> C<small>OMPOSER</small></h2>
 
 	
+		<br>
+
+		<p>Welcome! Before you get started, let's go over some of Mocha's elements.<br>
+		Scroll all the way down to begin.</p>
+
+		<br>
+		<br>
+		<br>
+
+		<img style="border:3px solid rgb(119, 119, 119)" src="MochaScreenshot.png"/>
+		<br>
+		<br>
+		<p>The above image is a screenshot of what you see when you begin Mocha.<p>
+
+		<br>
+
+		<p>At the top and center right of the screenshot, there is a red dot.<br>The dot shows where your hand is with respect to the <br>Leap Motion device that is tracking your hand.<br>Let's talk about the Leap Motion.</p>
+
+		<br>
+		<br>
+		<br>
+
+		<p> Before you use the Leap Motion, make sure the Leap Motion:
+
+		<ul>
+
+			<li>has all of its Leap Motion drivers installed</li>
+
+			<li>is plugged into the computer and tracking your hand</li>
+
+			<li>is parallel to the screen (x-direction) for more intuitive control</li>
+
+		</ul>
+
+		<br>
+		<br>
+
+		<p>Using the axis in the image below, your hand's position is <br>
+		parsed and given to the Synthesizer to play sounds.<p>
+
+		<br>
+
+		<img style="border:3px solid rgb(119, 119, 119)" id="leap-image" src="Leap_Axes.png"/>
+
+		<br>
+		<br>
+
+		<p>When the Synthesizer is playing:</p>
+
+		<ul align="justify">
+
+			<li>Horizontal movements (x-direction) change the frequency.</li>
+
+			<li>Vertical movements (y-direction) change the amplitude.</li>
+
+			<li>Movement toward the screen (z-direction) is a click and turns the cursor green.</li>
+
+			<li>Movement away from the screen is releasing the click and returns the cursor red.</li>
+
+		</ul>
+
+		<br>
+		<br>
+		<br>
+
+		<p>The next elements we'll look at are in the image below.</p>
+
+		<br>
+
+		<img style="border:3px solid rgb(119, 119, 119)" src="trackManager.png"/>
+
+		<br>
+		<br>
+
+		<p>The track manager is shown at the top.<br>
+		As the name suggests, you can manage tracks here</p>
+
+		<br>
+
+		<p>With the track manager, you can:</p>
+		<ul>
+			<li>Move tracks</li>
+			<li>Mute tracks</li>
+			<li>Delete tracks</li>
+
+		</ul>
+
+		<br>
+
+		<p>The synthesizer waveform is shown at the bottom.<br>
+		It shows wave representations when the synthesizer is playing.</p>
+
+		<br>
+
+		<p>Lastly, three buttons are shown in the middle:</p>
+		<ul>
+			<li>Toggle Synth: Turn on/off synth</li>
+			<li>Toggle Recording: Record or stop recording when synth is on</li>
+			<li>Playback Recording: Play tracks</li>
+
+		</ul>
+
+		<br>
+		<br>
+		<br>
+
+		<p>Now we can look at the bottom of the screen</p>
+
+		<br>
+
+		<img style="border:3px solid rgb(119, 119, 119)" src="bottomPanel.png"/>
+
+		<br>
+		<br>
+
+		<p>The metronome is a traditional metronome in beats per minute.</p>
+
+		<br>
+
+		<p>The lead-in time is not traditional lead-in time, though.<br>
+		It counts the time before recording starts when toggle recording is pressed.<br>
+		It is in seconds and is to alleviate having to move your hand<br>
+		to the toggle recording button to start recording.</p>
+
+		<br>
+
+		<p>The bottom is a tuner. It shows the closest note being played.<br>
+		It also shows how close to that note you are.</p>
 
 
-	<button align="center" class="btn btn-mocha btn-mocha-bottom" onclick="location.href='index.html';">Begin</button>
+		<br>
+		<br>
+		<br>
 
+		<p>Almost done!</p>
+
+		<br>
+
+		<p>Finally, shown below is the right panel of Mocha</p>
+
+		<br>
+
+		<img style="border:3px solid rgb(119, 119, 119)" src="rightPanel.png"/>
+
+		<br>
+		<br>
+
+		<p>The top is where you can load/save projects.<br><br>
+		The bottom is where you customize the synthesizer settings.<br>
+		Try them out to figure out what each one does.</p>
+
+		<br>
+		<br>
+
+		<p>And that's it!!!</p>
+
+		<br>
+		<br>
+		<br>
+
+
+		<p> Click begin to start making music!</p>
+
+		<br>
+
+		<button class="btn btn-mocha btn-mocha-bottom" onclick="location.href='index.html';">Begin</button>
+
+	</div>
 
 </body>
 
